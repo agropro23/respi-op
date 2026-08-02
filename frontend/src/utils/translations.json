@@ -1,0 +1,16 @@
+{
+  "allergens": {
+    "Grass Pollen": {
+      "hindi": "घास पराग",
+      "gujarati": "ઘાસ પરાગ"
+    },
+    "Tree Pollen": {
+      "hindi": "वृक्ष पराग",
+      "gujarati": "વૃક્ષ પરાગ"
+    },
+    "Alternaria": {
+      "hindi": "वैकल्पिक",
+      "gujarati": "પરચુરણ"
+    }
+  }
+}

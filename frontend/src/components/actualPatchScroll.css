@@ -1,0 +1,21 @@
+/* Modern scroll UI for ActualPatchTest allergen list */
+.actualpatch-scroll-container {
+  max-height: 480px; /* 10 rows x ~48px */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #f3f4f6;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(37,99,235,0.04);
+  margin-top: 0px;
+}
+
+.actualpatch-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+.actualpatch-scroll-container::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 8px;
+} 

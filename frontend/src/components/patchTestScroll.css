@@ -1,0 +1,31 @@
+/* Modern scroll UI for allergens list */
+.allergen-scroll-container {
+  max-height: 510px; /* 10 rows x 48px (MUI default row height) */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #f3f4f6;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(37,99,235,0.04);
+}
+
+.allergen-scroll-container::-webkit-scrollbar {
+  width: 8px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+.allergen-scroll-container::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 8px;
+}
+.allergen-row {
+  display: contents;
+}
+.allergen-scroll-indicator {
+  text-align: center;
+  color: #2563eb;
+  font-size: 13px;
+  margin: 8px 0 0 0;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+} 

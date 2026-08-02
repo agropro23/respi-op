@@ -1,0 +1,1656 @@
+{
+  "allergens": {
+    "Grass Pollen": {
+      "hindi": "घास पराग",
+      "gujarati": "ઘાસ પરાગ"
+    },
+    "Tree Pollen": {
+      "hindi": "वृक्ष पराग",
+      "gujarati": "વૃક્ષ પરાગ"
+    },
+    "Alternaria": {
+      "hindi": "वैकल्पिक",
+      "gujarati": "પરચુરણ"
+    },
+    "Pollens": {
+      "hi": "पराग",
+      "gu": "પરાગ",
+      "hindi": "पराग",
+      "gujarati": "પરાગ",
+      "marathi": "परागकण"
+    },
+    "Aerosols": {
+      "hindi": "एयरोसौल्ज़",
+      "gujarati": "વાયુરોધ"
+    },
+    "Allergy 3": {
+      "hindi": "एलर्जी 3",
+      "gujarati": "એલર્જી 3"
+    },
+    "Fungi": {
+      "hi": "कवक",
+      "gu": "ફૂગ",
+      "hindi": "कवक",
+      "gujarati": "ફૂગ",
+      "marathi": "बुरशी"
+    },
+    "Algaes": {
+      "hindi": "शैवाल",
+      "gujarati": "શેઘા"
+    },
+    "Mites": {
+      "hi": "के कण",
+      "gu": "જૂથ",
+      "hindi": "के कण",
+      "gujarati": "જૂથ",
+      "marathi": "माइट्स"
+    },
+    "Anderson": {
+      "hindi": "एंडरसन",
+      "gujarati": "અનેક"
+    },
+    "Dusts": {
+      "hi": "धूल",
+      "gu": "ધૂળ",
+      "hindi": "धूल",
+      "gujarati": "ધૂળ",
+      "marathi": "डस्ट्स"
+    },
+    "Jayne": {
+      "hindi": "जयने",
+      "gujarati": "જન"
+    },
+    "Insects": {
+      "hi": "कीड़े",
+      "gu": "જંતુઓ",
+      "hindi": "कीड़े",
+      "gujarati": "જંતુઓ",
+      "marathi": "कीटक"
+    },
+    "Cockroach": {
+      "hindi": "तिलचट्टा",
+      "gujarati": "વાપરો",
+      "marathi": "झुरळ"
+    },
+    "Cricket": {
+      "hindi": "क्रिकेट",
+      "gujarati": "ક્રિકેટ",
+      "marathi": "क्रिकेट"
+    },
+    "hi": {
+      "hindi": "नमस्ते",
+      "gujarati": "એક મહાન",
+      "gu": "એક મહાન"
+    },
+    "chicken pox": {
+      "hindi": "छोटी माता",
+      "gujarati": "ફિનિકલ",
+      "marathi": "चिकन पॉक्स"
+    },
+    "wander": {
+      "hindi": "घूमना",
+      "gujarati": "ભટકવું",
+      "marathi": "भटकंती"
+    },
+    "new hello": {
+      "hindi": "नया नमस्ते",
+      "gujarati": "નવું હેલો"
+    },
+    "Foods": {
+      "hi": "फूड्स",
+      "gu": "ખાદ્ય પદાર્થો",
+      "hindi": "फूड्स",
+      "gujarati": "ખાદ્ય પદાર્થો",
+      "marathi": "पदार्थ"
+    },
+    "food 111111": {
+      "hindi": "भोजन 111111",
+      "gujarati": "ખોરાક 111111",
+      "marathi": "अन्न 111111"
+    },
+    "food 2": {
+      "hindi": "भोजन 2",
+      "gujarati": "ખોરાક 2",
+      "marathi": "अन्न 2"
+    },
+    "juuu": {
+      "hindi": "जुआयू",
+      "gujarati": "જુરુ",
+      "marathi": "जुयू"
+    },
+    "dust 2": {
+      "hindi": "धूल २",
+      "gujarati": "ધૂળ 2",
+      "marathi": "धूळ 2"
+    },
+    "millet": {
+      "hindi": "बाजरा",
+      "gujarati": "બાજરી",
+      "marathi": "बाजरी"
+    },
+    "smell": {
+      "hindi": "गंध",
+      "gujarati": "ગંધ"
+    },
+    "fungi 1": {
+      "hindi": "कवक 1",
+      "gujarati": "ફૂગ 1",
+      "marathi": "बुरशी 1"
+    },
+    "Miscellaneous": {
+      "hi": "मिश्रित",
+      "gu": "પરચુરણ",
+      "hindi": "मिश्रित",
+      "gujarati": "પરચુરણ",
+      "marathi": "संकीर्ण"
+    },
+    "bye1": {
+      "hindi": "bye1",
+      "gujarati": "બાય 1",
+      "marathi": "बाय 1"
+    },
+    "mis 1": {
+      "hindi": "मिस 1",
+      "gujarati": "મિસ 1",
+      "marathi": "मिस 1"
+    },
+    "food 3": {
+      "hindi": "भोजन 3",
+      "gujarati": "ખોરાક 3",
+      "marathi": "अन्न 3"
+    },
+    "food 4": {
+      "hindi": "भोजन 4",
+      "gujarati": "ખોરાક 4",
+      "marathi": "अन्न 4"
+    },
+    "food90": {
+      "hindi": "food90",
+      "gujarati": "ખોરાક 90",
+      "marathi": "अन्न 90"
+    },
+    "mango": {
+      "hindi": "आम",
+      "gujarati": "કેરી",
+      "marathi": "आंबा"
+    },
+    "others": {
+      "hindi": "अन्य",
+      "gujarati": "અન્ય",
+      "marathi": "इतर"
+    },
+    "dusts 14": {
+      "hindi": "धूल 14",
+      "gujarati": "ડસ્ટ્સ 14"
+    },
+    "p 1": {
+      "hindi": "पी 1",
+      "gujarati": "પી 1"
+    },
+    "Pollen1": {
+      "hindi": "पराग 1",
+      "gujarati": "પરાગ",
+      "marathi": "परागकण 1"
+    },
+    "Banana": {
+      "hindi": "केला",
+      "gujarati": "કેળા",
+      "marathi": "केळी"
+    },
+    "Bread": {
+      "hindi": "रोटी",
+      "gujarati": "બટનો",
+      "marathi": "ब्रेड"
+    },
+    "Cockroach2": {
+      "hindi": "कॉकरोच 2",
+      "gujarati": "વકરોચ 2",
+      "marathi": "कॉकरोच 2"
+    },
+    "Dusts2": {
+      "hindi": "धूल 2",
+      "gujarati": "ડસ્ટ્સ 2",
+      "marathi": "डस्ट्स 2"
+    },
+    "Parthenium Hysterophorous": {
+      "hindi": "पार्थुनी",
+      "gujarati": "પાર્થેનિયમ",
+      "marathi": "पार्थेनियम हिस्टेरोफोरस"
+    },
+    "Morning": {
+      "hi": "सुबह",
+      "gu": "સવાર",
+      "mr": "सकाळी",
+      "hindi": "सुबह",
+      "gujarati": "સવાર",
+      "marathi": "सकाळी"
+    },
+    "Night": {
+      "hi": "रात",
+      "gu": "રાત",
+      "mr": "रात्री",
+      "hindi": "रात",
+      "gujarati": "રાત",
+      "marathi": "रात्री"
+    },
+    "Evening": {
+      "gu": "સાંજ",
+      "hi": "शाम",
+      "hindi": "शाम",
+      "gujarati": "સાંજ",
+      "mr": "संध्याकाळ",
+      "marathi": "संध्याकाळ"
+    },
+    "Afternoon": {
+      "gu": "બપોર",
+      "hindi": "दोपहर",
+      "gujarati": "બપોર",
+      "mr": "दुपारी",
+      "marathi": "दुपारी",
+      "hi": "दोपहर"
+    },
+    "Patient ID:": {
+      "hindi": "रोगी आईडी:",
+      "gujarati": "દર્દી આઈડી:",
+      "marathi": "रुग्ण आयडी:"
+    },
+    "Name:": {
+      "hindi": "नाम:",
+      "gujarati": "નામ:",
+      "marathi": "नाव:"
+    },
+    "Age/Sex:": {
+      "hindi": "आयु/सेक्स:",
+      "gujarati": "ઉંમર/સેક્સ:",
+      "marathi": "वय/लिंग:"
+    },
+    "Contact:": {
+      "hindi": "संपर्क करना:",
+      "gujarati": "સંપર્ક:",
+      "marathi": "संपर्क:"
+    },
+    "Referred By:": {
+      "hindi": "द्वारा उल्लिखित:",
+      "gujarati": "દ્વારા સંદર્ભિત:",
+      "marathi": "द्वारा संदर्भित:"
+    },
+    "Medicine": {
+      "hindi": "दवा",
+      "gujarati": "દવા"
+    },
+    "Dosage": {
+      "hindi": "मात्रा बनाने की विधि",
+      "gujarati": "ડોઝ"
+    },
+    "Timing": {
+      "hindi": "समय",
+      "gujarati": "સમય -સમય"
+    },
+    "Duration": {
+      "hindi": "अवधि",
+      "gujarati": "સમયગાળો"
+    },
+    "Qty": {
+      "hindi": "क्यूटी",
+      "gujarati": "Q"
+    },
+    "Dhruv": {
+      "hindi": "ध्रुव",
+      "gujarati": "ધ્રુવ",
+      "marathi": "ध्रुव"
+    },
+    "Male": {
+      "hindi": "पुरुष",
+      "gujarati": "નર",
+      "marathi": "नर"
+    },
+    "Dr Samir Gami": {
+      "hindi": "डॉ। समीर गमी",
+      "gujarati": "સમીર ગામિ",
+      "marathi": "डॉ समीर गामी"
+    },
+    "None": {
+      "hindi": "कोई नहीं",
+      "gujarati": "કોઈ",
+      "marathi": "काहीही नाही"
+    },
+    "days": {
+      "hindi": "दिन",
+      "gujarati": "દિવસ",
+      "marathi": "दिवस"
+    },
+    "Next Visit in": {
+      "hindi": "में अगली यात्रा",
+      "gujarati": "આગળની મુલાકાત",
+      "marathi": "पुढील भेट"
+    },
+    "Date:": {
+      "marathi": "तारीख:",
+      "gujarati": "તારીખ:",
+      "hindi": "तारीख:"
+    },
+    "Next Visit after": {
+      "marathi": "पुढील भेट नंतर",
+      "gujarati": "પછીની મુલાકાત પછી"
+    },
+    "Next Visit": {
+      "gujarati": "આગલી મુલાકાત"
+    },
+    "before Food": {
+      "hi": "भोजन से पहले",
+      "gu": "ખોરાક પહેલાં"
+    },
+    "Dander/Epithelia": {
+      "hindi": "डैंडर/एपिथेलिया",
+      "gujarati": "ખાદ્યપદ",
+      "marathi": "डेंडर/एपिथेलिया"
+    },
+    "a": {
+      "hindi": "ए",
+      "gujarati": "એક",
+      "marathi": "अ"
+    },
+    "with milk": {
+      "hi": "दूध के साथ"
+    },
+    "vvd": {
+      "hindi": "वीवीडी",
+      "gujarati": "વી.વી.ડી.",
+      "marathi": "व्हीव्हीडी"
+    },
+    "aa": {
+      "hindi": "आ",
+      "gujarati": "એ.એ.",
+      "marathi": "एए"
+    },
+    "mmc": {
+      "hindi": "एमएमसी",
+      "gujarati": "એમ.એમ.સી.",
+      "marathi": "एमएमसी"
+    },
+    "New-1": {
+      "hindi": "New-1",
+      "gujarati": "નવી -1",
+      "marathi": "नवीन -1"
+    },
+    "new-2": {
+      "hindi": "new-2",
+      "gujarati": "New-૨૦૧",
+      "marathi": "नवीन -2"
+    },
+    "dd": {
+      "hindi": "डीडी",
+      "gujarati": "ડી.ડી.",
+      "marathi": "डीडी"
+    },
+    "after Food": {
+      "gu": "ખાદ્ય",
+      "hi": "भोजन के बाद"
+    },
+    "with Food": {
+      "gu": "ખોરાક સાથે",
+      "hi": "भोजन के साथ"
+    },
+    "no inste": {
+      "gu": "કોઈ વસ્તુ નથી"
+    },
+    "YES": {
+      "gu": "હા"
+    },
+    "After Food, હા": {
+      "gujarati": "ખોરાક પછી, હા"
+    },
+    "yes no": {
+      "gu": "હા ના"
+    },
+    "Before Food, હા ના": {
+      "gujarati": "ખોરાક પહેલાં, હા ના"
+    },
+    "after food": {
+      "gu": "ખાદ્ય"
+    },
+    "ખાદ્ય": {
+      "gujarati": "."
+    },
+    "i am harshil": {
+      "gu": "હું કઠોર છું"
+    },
+    "Before Food, હું કઠોર છું": {
+      "gujarati": "ખોરાક પહેલાં, હું કઠોર છું"
+    },
+    "After Food, ખાદ્ય": {
+      "gujarati": "ખોરાક પછી, ખાદ્ય"
+    },
+    "take after drinking the milk or with milk": {
+      "gu": "દૂધ પીધા પછી અથવા દૂધ સાથે લો"
+    },
+    "Before Food, દૂધ પીધા પછી અથવા દૂધ સાથે લો": {
+      "gujarati": "ખોરાક પહેલાં, દૂધ પીધા પછી અથવા સાથે લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો લો"
+    },
+    "use pillow after washing": {
+      "gu": "ધોવા પછી ઓશીકું વાપરો"
+    },
+    "Before Food, ધોવા પછી ઓશીકું વાપરો": {
+      "gujarati": "ખોરાક પહેલાં, ધોવા પછી ઓશીકું"
+    },
+    "test": {
+      "hindi": "परीक्षा",
+      "gujarati": "કસોટી",
+      "marathi": "चाचणी"
+    },
+    "Take after bath, use all type of spooon": {
+      "gu": "સ્નાન પછી લો, તમામ પ્રકારના સ્પૂનનો ઉપયોગ કરો"
+    },
+    "Before Food, After Food, With Food": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક પછી, ખોરાક સાથે",
+      "hindi": "भोजन से पहले, भोजन के बाद, भोजन के साथ"
+    },
+    "Before Food, With Food, Take after bath, use all type of spooon": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક સાથે, સ્નાન કર્યા પછી, તમામ પ્રકારના ચમચીનો ઉપયોગ કરો"
+    },
+    "Before Food, With Food, સ્નાન પછી લો, તમામ પ્રકારના સ્પૂનનો ઉપયોગ કરો": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક સાથે, સ્નાન પછી લો, તમામ પ્રકારના સ્પૂનનો ઉપયોગ કરો"
+    },
+    "Use after milk": {
+      "hi": "दूध के बाद उपयोग करें",
+      "gu": "દૂધ પછી ઉપયોગ કરો"
+    },
+    "Before Food, With Food, दूध के बाद उपयोग करें": {
+      "hindi": "भोजन से पहले, भोजन के साथ, दूध के kanaute उपयोग rurें"
+    },
+    "Before Food, With Food, દૂધ પછી ઉપયોગ કરો": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક સાથે, દૂધ ઉપયોગ ઉપયોગ"
+    },
+    "take after milk": {
+      "gu": "દૂધ પછી"
+    },
+    "Before Food, With Food, દૂધ પછી": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક સાથે, દૂધ પછી"
+    },
+    "Before Food": {
+      "hindi": "भोजन से पहले",
+      "gujarati": "ખોરાક પહેલાં"
+    },
+    "With Food, hii": {
+      "hindi": "भोजन के साथ, hii"
+    },
+    "hii": {
+      "gu": "હાઈ"
+    },
+    "With Food, હાઈ": {
+      "gujarati": "ખોરાક સાથે, હાઈ"
+    },
+    "Hello": {
+      "hindi": "नमस्ते",
+      "gujarati": "નમ્ર",
+      "marathi": "हॅलो"
+    },
+    "hello": {
+      "gu": "નમ્ર"
+    },
+    "Yes no": {
+      "gu": "હા ના"
+    },
+    "Before Food, નમ્ર": {
+      "gujarati": "ખોરાક પહેલાં, નમ્ર"
+    },
+    "Before Food, With Food, હા ના": {
+      "gujarati": "ખોરાક પહેલાં, ખોરાક સાથે, હા ના"
+    },
+    "hui": {
+      "hindi": "हुई",
+      "gujarati": "hui",
+      "marathi": "हुई"
+    },
+    "ff": {
+      "hindi": "सीमांत बल",
+      "gujarati": "એફ.એફ.",
+      "marathi": "एफएफ"
+    },
+    "Acacia Arabica": {
+      "hindi": "अराजक अरबिका",
+      "gujarati": "બાવળની અરબીકા",
+      "marathi": "बाभूळ अरबीका"
+    },
+    "Acacia Orifulis": {
+      "hindi": "अज्ञेय",
+      "gujarati": "બાવળ",
+      "marathi": "बाभूळ"
+    },
+    "Ailanthus Excelsa": {
+      "hindi": "ऐलेंटस एक्सेलसा",
+      "gujarati": "આઈલાન્થસ એક્સેલ્સા",
+      "marathi": "आयलॅन्थस एक्सेल्सा"
+    },
+    "Amaranthus Spinosus": {
+      "hindi": "निन्द्र",
+      "gujarati": "અમરાન્થસ સ્પિનોસ",
+      "marathi": "अमरॅन्थस स्पिनोसस"
+    },
+    "Argemone Mexicana": {
+      "hindi": "अर्गमोन मेक्सिकाना",
+      "gujarati": "આર્જેમોન મેક્સિકોન",
+      "marathi": "अर्गेमोन मेक्सिकाना"
+    },
+    "Azadirachta Indica": {
+      "hindi": "नीम",
+      "gujarati": "Zન",
+      "marathi": "आझादिराक्टा इंडिका"
+    },
+    "Brassica Nigra": {
+      "hindi": "ब्रासिका नाइग्रा",
+      "gujarati": "બ્રાસિકા નિગરા",
+      "marathi": "ब्रासिका निग्रा"
+    },
+    "Cassia Fistula": {
+      "hindi": "कैसिया फिस्टुला",
+      "gujarati": "કેસિઆ ફિસ્ટુલા",
+      "marathi": "कॅसिया फिस्टुला"
+    },
+    "Cassia Occidentalis": {
+      "hindi": "कैसिआडेंटलिस",
+      "gujarati": "કેસિઆ પ્રસંગો",
+      "marathi": "कॅसिया ऑक्सिडेंटलिस"
+    },
+    "Cassia Siamea": {
+      "hindi": "कैसिया सियामिया",
+      "gujarati": "કેસિઆ સિયામિયા",
+      "marathi": "कॅसिया सियामिया"
+    },
+    "Casuarina Equisetifolia": {
+      "hindi": "कस्‍ता",
+      "gujarati": "સમતુલ્ય",
+      "marathi": "कॅसुरिना इक्विसेटिफोलिया"
+    },
+    "Ceiba Pentendra": {
+      "hindi": "सेबा पेंटेंद्र",
+      "gujarati": "પેન્ટેન્દ્ર",
+      "marathi": "सेइबा पेंटेंद्र"
+    },
+    "Centhrus Barbatus": {
+      "hindi": "सताना",
+      "gujarati": "કેન્દ્ર",
+      "marathi": "सेन्ट्रस बार्बॅटस"
+    },
+    "Cocos Nucifera": {
+      "hindi": "कोकोस न्यूकिफ़ेरा",
+      "gujarati": "કોકોસ ન્યુકિફેરા",
+      "marathi": "कोकोस न्यूकिफेरा"
+    },
+    "Cynodon Dactylon": {
+      "hindi": "सिनोडोन",
+      "gujarati": "કોઇ",
+      "marathi": "सायनोडॉन डॅक्टिलॉन"
+    },
+    "Cyperus Rotundu": {
+      "hindi": "सोरस रोटुंडु",
+      "gujarati": "રંગબેરંગી રંગ",
+      "marathi": "सायपरस रोटुंडु"
+    },
+    "Dodonea Viscose": {
+      "hindi": "डोडोनिया विस्कोस",
+      "gujarati": "ડોડોનીસ",
+      "marathi": "डोडोनिया व्हिस्कोज"
+    },
+    "Eucalyptus Sp.": {
+      "hindi": "यूकेलिप्टस सपा।",
+      "gujarati": "નીલગિરી એસપી.",
+      "marathi": "नीलगिरी एसपी."
+    },
+    "Holoptela Integrifolia": {
+      "hindi": "होलोप्टेला इंटीफिफ़ोलिया",
+      "gujarati": "હોલોપટેલા એકીકરણ",
+      "marathi": "होलोप्टेला इंटिग्रिफोलिया"
+    },
+    "Ipomea Sp.": {
+      "hindi": "इपोमिया सपा।",
+      "gujarati": "IPomea એસપી.",
+      "marathi": "आयपोमीया एसपी."
+    },
+    "Ischaemum Indica": {
+      "hindi": "इस्चैमम इंडिका",
+      "gujarati": "ઇસ્કેમમ ઈન્ડિકા",
+      "marathi": "इस्केमम इंडिका"
+    },
+    "Mangifera Indica": {
+      "hindi": "मंगिफेरा इंडिका",
+      "gujarati": "મંગિફેરા",
+      "marathi": "मंगिफेरा इंडिका"
+    },
+    "Peltophorum Pterocarpum": {
+      "hindi": "पित्ताशय",
+      "gujarati": "પેલ્ટોફોરમ પેરોકાર્પમ",
+      "marathi": "पेल्टोफोरम टेरोकार्पम"
+    },
+    "Pennisetum Typhoides": {
+      "hindi": "पेनिसेटम टाइफोइड्स",
+      "gujarati": "પેનિસેટમ ટાઇફોઇડ્સ",
+      "marathi": "पेनिसेटम टायफाइड्स"
+    },
+    "Pithecellobium Dulce": {
+      "hindi": "पिटेलेस",
+      "gujarati": "તામસી",
+      "marathi": "पिथेसेलोबियम डुल्स"
+    },
+    "Prosopis Juliflora": {
+      "hindi": "प्रोसोपिस जूलिफ्लोरा",
+      "gujarati": "પ્રોસોપીસ જુલીફ્લોરા",
+      "marathi": "प्रोसोपिस ज्युलिफ्लोरा"
+    },
+    "Ricinus Communis": {
+      "hindi": "राइसिनस कम्युनिस",
+      "gujarati": "તાત્વિક સામ્ય",
+      "marathi": "रिकिनस कम्युनिस"
+    },
+    "Salvadora Persica": {
+      "hindi": "सल्वाडोरा पर्सिका",
+      "gujarati": "સાલ્વાડોરા પર્સિકા",
+      "marathi": "साल्वाडोरा पर्सिका"
+    },
+    "Samania Saman": {
+      "hindi": "समनिया समन",
+      "gujarati": "સમાનિયા સમાન",
+      "marathi": "सामनिया सामन"
+    },
+    "Sorghum Vulgare": {
+      "hindi": "सोरघम वल्गारे",
+      "gujarati": "જુવાર",
+      "marathi": "ज्वारी वल्गारे"
+    },
+    "Typha Angustata": {
+      "hindi": "टायफा एंगुस्टा",
+      "gujarati": "વક્તા",
+      "marathi": "टायफा एंगुस्टाटा"
+    },
+    "Xanthium Strumarium": {
+      "hindi": "ज़ाहीन",
+      "gujarati": "ઝેન્થિયમ સ્ટુમેરિયમ",
+      "marathi": "Xanthium Strumarium"
+    },
+    "Zea Mays": {
+      "hindi": "ज़ी मेयस",
+      "gujarati": "ઝીયા મે",
+      "marathi": "झिया मे"
+    },
+    "Alternaria Alternata": {
+      "hindi": "वैकल्पिक अल्टरनेटा",
+      "gujarati": "વૈકલ્પિક વૈકલ્પિકતા",
+      "marathi": "अल्टरनेरिया अल्टरनाटा"
+    },
+    "Aspergillus Flavus": {
+      "hindi": "एस्परगिलस फ्लेवस",
+      "gujarati": "સણગનન",
+      "marathi": "एस्परगिलस फ्लेव्हस"
+    },
+    "Aspergillus Fumigatus": {
+      "hindi": "एस्परगिलस फ्यूमिगेटस",
+      "gujarati": "તુર્કી",
+      "marathi": "एस्परगिलस फ्युमिगॅटस"
+    },
+    "Aspergillus Niger": {
+      "hindi": "एस्परजिलस नाइजर",
+      "gujarati": "સ્રાવ નાઇજર",
+      "marathi": "एस्परगिलस नायजर"
+    },
+    "Aspergillus Tamarii": {
+      "hindi": "एस्परगिलस तमरी",
+      "gujarati": "તમારીય",
+      "marathi": "एस्परगिलस तमारी"
+    },
+    "Aspergillus Versicolor": {
+      "hindi": "एस्परगिलस वर्सिकोलर",
+      "gujarati": "બેવકૂફ",
+      "marathi": "एस्परगिलस व्हर्सीकॉलर"
+    },
+    "Candida Albicans": {
+      "hindi": "कैनडीडा अल्बिकन्स",
+      "gujarati": "કેન્ડિડા અલ્બીકન્સ",
+      "marathi": "कॅन्डिडा अल्बिकन्स"
+    },
+    "Colodopsporium Herbarum": {
+      "hindi": "कोलोडोप्सपोरियम हर्बेरम",
+      "gujarati": "કોલોડોપ્સ્પોરમ હર્બેરમ",
+      "marathi": "कॉलोडॉपस्पोरियम हर्बरम"
+    },
+    "Curvularia Lunta": {
+      "hindi": "वक्र लंटा",
+      "gujarati": "વાંકડિયું",
+      "marathi": "कर्व्हुलरिया लुंटा"
+    },
+    "Fusarium Solanii": {
+      "hindi": "फुसैरियम सोलानी",
+      "gujarati": "ફ્યુઝેરિયમ સોલાની",
+      "marathi": "फ्यूझेरियम सोलानी"
+    },
+    "Helminthosporium Sp.": {
+      "hindi": "हेल्मिन्थोस्पोरियम सपा।",
+      "gujarati": "હેલ્મિન્થોસ્પોરિયમ એસપી.",
+      "marathi": "हेल्मिंथोस्पोरियम एसपी."
+    },
+    "Penicillium Sp.": {
+      "hindi": "पेनिसिलियम सपा।",
+      "gujarati": "પેનિસિલિયમ એસપી.",
+      "marathi": "पेनिसिलियम एसपी."
+    },
+    "Phoma Tropicalis": {
+      "hindi": "फोमा ट्रॉपिकलिस",
+      "gujarati": "ફોમા ઉષ્ણકટિબંધ",
+      "marathi": "फोमा ट्रॉपिकलिस"
+    },
+    "Rhizopus Nigricans": {
+      "hindi": "राइजोपस निग्रिकन",
+      "gujarati": "રાઇઝોપસ નિગ્રેન્સ",
+      "marathi": "Rhizopus निग्रिकन्स"
+    },
+    "Tricoderma": {
+      "hindi": "ट्राइकोडर्मा",
+      "gujarati": "ત્રિકોણાકાર",
+      "marathi": "ट्रायकोडर्मा"
+    },
+    "Blomia Sp.": {
+      "hindi": "ब्लोमिया सपा।",
+      "gujarati": "બ્લ om મિયા એસપી.",
+      "marathi": "ब्लोमिया एसपी."
+    },
+    "D.Farina": {
+      "hindi": "डीफरीना",
+      "gujarati": "ડીફેરિના",
+      "marathi": "D.Farina"
+    },
+    "D.Pteronyssinus": {
+      "hindi": "पचास",
+      "gujarati": "ડી.પિટોનિસિનસ",
+      "marathi": "डी"
+    },
+    "Cotton Dust": {
+      "hindi": "कपास की धूल",
+      "gujarati": "ધૂળ",
+      "marathi": "कापूस धूळ"
+    },
+    "Grain Dust (Rice)": {
+      "hindi": "अनाज धूल (चावल)",
+      "gujarati": "અનાજની ધૂળ (ચોખા)",
+      "marathi": "धान्य धूळ (तांदूळ)"
+    },
+    "Grain Dust (Wheat)": {
+      "hindi": "अनाज धूल (गेहूं)",
+      "gujarati": "અનાજની ધૂળ (ઘઉં)",
+      "marathi": "धान्य धूळ (गहू)"
+    },
+    "Hay Dust": {
+      "hindi": "धूल",
+      "gujarati": "પરાગરજ",
+      "marathi": "गवत धूळ"
+    },
+    "House Dust": {
+      "hindi": "घर की धूल",
+      "gujarati": "ઘરની ધૂળ",
+      "marathi": "घराची धूळ"
+    },
+    "Jute": {
+      "hindi": "जूट",
+      "gujarati": "શણ",
+      "marathi": "Jute"
+    },
+    "Paper Dust": {
+      "hindi": "कागज की धूल",
+      "gujarati": "કાગળની ધૂળ",
+      "marathi": "कागदाची धूळ"
+    },
+    "Silk Dust": {
+      "hindi": "रेशम की धूल",
+      "gujarati": "રેશમ",
+      "marathi": "रेशीम धूळ"
+    },
+    "Spider web Dust": {
+      "hindi": "स्पाइडर वेब डस्ट",
+      "gujarati": "સ્પાઈડર વેબ ધૂળ",
+      "marathi": "कोळी वेब धूळ"
+    },
+    "Straw Dust": {
+      "hindi": "पुआल धूल",
+      "gujarati": "મઠ",
+      "marathi": "पेंढा धूळ"
+    },
+    "Tobaco Dust": {
+      "hindi": "टोबैको डस्ट",
+      "gujarati": "તમાકુની ધૂળ",
+      "marathi": "टोबाको धूळ"
+    },
+    "Wheat Dust (TH)": {
+      "hindi": "गेहूं की धूल (थ)",
+      "gujarati": "ઘઉંની ધૂળ (મી)",
+      "marathi": "गहू धूळ (व्या)"
+    },
+    "Ant": {
+      "hindi": "चींटी",
+      "gujarati": "કીડી",
+      "marathi": "मुंगी"
+    },
+    "Grass Hopper": {
+      "hindi": "ग्रास हॉपर",
+      "gujarati": "ઘાસના ઘૂંસડા",
+      "marathi": "गवत हॉपर"
+    },
+    "Honey Bee": {
+      "hindi": "मधु मक्खी",
+      "gujarati": "મધમાખી",
+      "marathi": "मध मधमाशी"
+    },
+    "House Fly": {
+      "hindi": "हाउस फ्लाई",
+      "gujarati": "ઘરની ફ્લાય",
+      "marathi": "हाऊस फ्लाय"
+    },
+    "Jassid": {
+      "hindi": "जस्सिद",
+      "gujarati": "જાસૂસ",
+      "marathi": "जॅसिड"
+    },
+    "Mosquito": {
+      "hindi": "मच्छर",
+      "gujarati": "મચ્છર",
+      "marathi": "डास"
+    },
+    "Moth": {
+      "hindi": "कीट",
+      "gujarati": "શણગાર",
+      "marathi": "मॉथ"
+    },
+    "Rice Weevil": {
+      "hindi": "चावल वेविल",
+      "gujarati": "ચોખાના દળાં",
+      "marathi": "तांदूळ भुंगा"
+    },
+    "Wasp": {
+      "hindi": "हड्डा",
+      "gujarati": "ભમરી",
+      "marathi": "कचरा"
+    },
+    "Buffalo Dander": {
+      "hindi": "बफ़ेलो डैंडर",
+      "gujarati": "ભેંસ",
+      "marathi": "बफेलो डॅन्डर"
+    },
+    "Cat Dander": {
+      "hindi": "बिल्ली",
+      "gujarati": "સુશોભન",
+      "marathi": "मांजरीचे डॅन्डर"
+    },
+    "Chicken Feather": {
+      "hindi": "चिकन पंख",
+      "gujarati": "પીંછા",
+      "marathi": "चिकन पंख"
+    },
+    "Dog Epithelia": {
+      "hindi": "डॉग एपिथेलिया",
+      "gujarati": "કૂતરો ઉપકલા",
+      "marathi": "कुत्रा एपिथेलिया"
+    },
+    "Human Dander(Dandruff)": {
+      "hindi": "ह्यूमन डैंडर (रूसी)",
+      "gujarati": "હ્યુમન ડેંડર (ડ and ન્ડ્રફ)",
+      "marathi": "ह्यूमन डेंडर (डँड्रफ)"
+    },
+    "Pigeon's Dropping": {
+      "hindi": "कबूतर",
+      "gujarati": "ખાદ્ય",
+      "marathi": "कबूतर सोडणे"
+    },
+    "Pigeon's Feather": {
+      "hindi": "कबूतर का पंख",
+      "gujarati": "પીંછા",
+      "marathi": "कबूतरची पंख"
+    },
+    "Sheep's Wool": {
+      "hindi": "भेड़ का ऊन",
+      "gujarati": "ઘેટાંની ool ન",
+      "marathi": "मेंढीचे लोकर"
+    },
+    "Aginomoto": {
+      "hindi": "गम्",
+      "gujarati": "જિનોમોટો",
+      "marathi": "एजिनोमोटो"
+    },
+    "Almond": {
+      "hindi": "बादाम",
+      "gujarati": "બદામ",
+      "marathi": "बदाम"
+    },
+    "Amala": {
+      "hindi": "अमला",
+      "gujarati": "અમલા",
+      "marathi": "अमला"
+    },
+    "Apple": {
+      "hindi": "सेब",
+      "gujarati": "સફરજન",
+      "marathi": "Apple पल"
+    },
+    "Asafoetida": {
+      "hindi": "हींग",
+      "gujarati": "એસોફોટિડા",
+      "marathi": "Afafoetida"
+    },
+    "Bajra": {
+      "hindi": "बाजरे",
+      "gujarati": "બજરા",
+      "marathi": "बाजरा"
+    },
+    "Barley": {
+      "hindi": "जौ",
+      "gujarati": "જવ",
+      "marathi": "बार्ली"
+    },
+    "Bean": {
+      "hindi": "बीन",
+      "gujarati": "બીન",
+      "marathi": "बीन"
+    },
+    "Beet": {
+      "hindi": "चुक़ंदर",
+      "gujarati": "સલાદ",
+      "marathi": "बीट"
+    },
+    "Beetle Leaf": {
+      "hindi": "बीटल लीफ",
+      "gujarati": "બીટલ પર્ણ",
+      "marathi": "बीटल लीफ"
+    },
+    "Beetle Nut": {
+      "hindi": "बीटल नट",
+      "gujarati": "ભમરો",
+      "marathi": "बीटल नट"
+    },
+    "Bitter Guard": {
+      "hindi": "करेला",
+      "gujarati": "કડવી રક્ષક",
+      "marathi": "कडू रक्षक"
+    },
+    "Black Pepper": {
+      "hindi": "काली मिर्च",
+      "gujarati": "કાળા",
+      "marathi": "काळी मिरपूड"
+    },
+    "Black Plum": {
+      "hindi": "काले बेर",
+      "gujarati": "કાળા રંગ",
+      "marathi": "काळा मनुका"
+    },
+    "Brinjal": {
+      "hindi": "बैंगन",
+      "gujarati": "શોરબકોર",
+      "marathi": "वांगी"
+    },
+    "Butter": {
+      "hindi": "मक्खन",
+      "gujarati": "માખણ",
+      "marathi": "लोणी"
+    },
+    "Cabbage": {
+      "hindi": "पत्ता गोभी",
+      "gujarati": "કોબી",
+      "marathi": "कोबी"
+    },
+    "Capsicum": {
+      "hindi": "मिर्च",
+      "gujarati": "ક capંગિકમ",
+      "marathi": "कॅप्सिकम"
+    },
+    "Cardamom": {
+      "hindi": "इलायिका",
+      "gujarati": "ઇલાયચી",
+      "marathi": "वेलची"
+    },
+    "Carrot": {
+      "hindi": "गाजर",
+      "gujarati": "ગાજર",
+      "marathi": "गाजर"
+    },
+    "Cashew Nut": {
+      "hindi": "काजू नट",
+      "gujarati": "કાજુ",
+      "marathi": "काजू नट"
+    },
+    "Cauliflower": {
+      "hindi": "फूलगोभी",
+      "gujarati": "ફૂલકોબી",
+      "marathi": "फुलकोबी"
+    },
+    "Cheese": {
+      "hindi": "पनीर",
+      "gujarati": "પનીર",
+      "marathi": "चीज"
+    },
+    "Cherry": {
+      "hindi": "चेरी",
+      "gujarati": "ચેરી",
+      "marathi": "चेरी"
+    },
+    "Chest Nut": {
+      "hindi": "छाती नट",
+      "gujarati": "નખ",
+      "marathi": "छातीचे नट"
+    },
+    "Chicken": {
+      "hindi": "मुर्गा",
+      "gujarati": "વિદ્યુત",
+      "marathi": "कोंबडी"
+    },
+    "Chikoo": {
+      "hindi": "Chikoo",
+      "gujarati": "ક chંગુ",
+      "marathi": "चिकू"
+    },
+    "Chilli": {
+      "hindi": "मिर्च",
+      "gujarati": "મરચાં",
+      "marathi": "मिरची"
+    },
+    "Chivda": {
+      "hindi": "चिवडा",
+      "gujarati": "ચીવ",
+      "marathi": "चिवडा"
+    },
+    "Chocolate": {
+      "hindi": "चॉकलेट",
+      "gujarati": "ચટણી",
+      "marathi": "चॉकलेट"
+    },
+    "Cinnamon": {
+      "hindi": "दालचीनी",
+      "gujarati": "તજ",
+      "marathi": "दालचिनी"
+    },
+    "Clove": {
+      "hindi": "लौंग",
+      "gujarati": "ફાટવું",
+      "marathi": "लवंग"
+    },
+    "Coconut": {
+      "hindi": "नारियल",
+      "gujarati": "નારિયેળ",
+      "marathi": "नारळ"
+    },
+    "Coffee": {
+      "hindi": "कॉफी",
+      "gujarati": "કોફી",
+      "marathi": "कॉफी"
+    },
+    "Crab": {
+      "hindi": "केकड़ा",
+      "gujarati": "કરચલો",
+      "marathi": "खेकडा"
+    },
+    "Cucumber": {
+      "hindi": "खीरा",
+      "gujarati": "કાકડી",
+      "marathi": "काकडी"
+    },
+    "Cumin Seeds": {
+      "hindi": "जीरा",
+      "gujarati": "જીરું",
+      "marathi": "जिरे बियाणे"
+    },
+    "Curd": {
+      "hindi": "दही",
+      "gujarati": "દંભ",
+      "marathi": "दही"
+    },
+    "Curry Leaves": {
+      "hindi": "चोर",
+      "gujarati": "કળ",
+      "marathi": "करी पाने"
+    },
+    "Custared Apple": {
+      "hindi": "कस्टर्ड एप्पल",
+      "gujarati": "સફરજન",
+      "marathi": "सफरचंद कस्टर्ड"
+    },
+    "Dal Arhar": {
+      "hindi": "दाल अरर",
+      "gujarati": "દાળ અરહર",
+      "marathi": "दल अरहर"
+    },
+    "Dal Moth": {
+      "hindi": "दाल मोथ",
+      "gujarati": "દાળની મ oth થ",
+      "marathi": "दल मॉथ"
+    },
+    "Dalda": {
+      "hindi": "दाल्डा",
+      "gujarati": "ડાલ્ડા",
+      "marathi": "दालडा"
+    },
+    "Dated": {
+      "hindi": "दिनांकित",
+      "gujarati": "તારીખ",
+      "marathi": "दिनांक"
+    },
+    "Dhania(Coriander)": {
+      "hindi": "धनिया (धनिया)",
+      "gujarati": "ધનિયા (કોથમીર)",
+      "marathi": "धनिया (धणे)"
+    },
+    "Drumsticks": {
+      "hindi": "ड्रमस्टिक",
+      "gujarati": "ડ્રમસ્ટિક્સ",
+      "marathi": "ड्रमस्टिक"
+    },
+    "Egg": {
+      "hindi": "अंडा",
+      "gujarati": "ઇંડું",
+      "marathi": "अंडे"
+    },
+    "Ehretia Lavis": {
+      "hindi": "एह्रेटिया लाविस",
+      "gujarati": "Eોરટિયા",
+      "marathi": "एह्रेटिया लॅव्हिस"
+    },
+    "Elephant Foot": {
+      "hindi": "हाथी",
+      "gujarati": "હાથીનો પગ",
+      "marathi": "हत्ती पाय"
+    },
+    "Fig": {
+      "hindi": "अंजीर",
+      "gujarati": "અંજીર",
+      "marathi": "अंजीर"
+    },
+    "Garlic": {
+      "hindi": "लहसुन",
+      "gujarati": "લસણ",
+      "marathi": "लसूण"
+    },
+    "Ghevada": {
+      "hindi": "घेवाडा",
+      "gujarati": "ગંદોદ",
+      "marathi": "गेवाडा"
+    },
+    "Ghilaki": {
+      "hindi": "घिलाकी",
+      "gujarati": "ગલાવણી",
+      "marathi": "गिलाकी"
+    },
+    "Ginger": {
+      "hindi": "अदरक",
+      "gujarati": "આદુ",
+      "marathi": "आले"
+    },
+    "Gowar": {
+      "hindi": "गौवर",
+      "gujarati": "ગોર",
+      "marathi": "Gowar"
+    },
+    "Gram(Bengali)": {
+      "hindi": "ग्राम (बंगाली)",
+      "gujarati": "ગ્રામ (બંગાળી)",
+      "marathi": "ग्रॅम (बंगाली)"
+    },
+    "Gram(Kabuli)": {
+      "hindi": "ग्राम (काबुली)",
+      "gujarati": "ગ્રામ (કાબુલી)",
+      "marathi": "ग्रॅम (काबुली)"
+    },
+    "Grapes": {
+      "hindi": "अंगूर",
+      "gujarati": "દ્રાક્ષ",
+      "marathi": "द्राक्षे"
+    },
+    "Guava": {
+      "hindi": "अमरूद",
+      "gujarati": "જામફળ",
+      "marathi": "पेरू"
+    },
+    "Gum Acacia": {
+      "hindi": "गम बबूल",
+      "gujarati": "ગમગીન",
+      "marathi": "गम बाभूळ"
+    },
+    "Jack Fruit": {
+      "hindi": "जैक फल",
+      "gujarati": "જેક ફળ",
+      "marathi": "जॅक फळ"
+    },
+    "Jowar": {
+      "hindi": "जवर",
+      "gujarati": "આનંદ",
+      "marathi": "ज्वार"
+    },
+    "Lady's Finger": {
+      "hindi": "लेडी की उंगली",
+      "gujarati": "સ્ત્રીની આંગળી",
+      "marathi": "लेडीचे बोट"
+    },
+    "Leamon Grass": {
+      "hindi": "लेमोन ग्रास",
+      "gujarati": "ચપળ ઘાસ",
+      "marathi": "लेमन गवत"
+    },
+    "Lemon": {
+      "hindi": "नींबू",
+      "gujarati": "લીંબુ",
+      "marathi": "लिंबू"
+    },
+    "Lobster": {
+      "hindi": "झींगा मछली",
+      "gujarati": "લોબસ્ટર",
+      "marathi": "लॉबस्टर"
+    },
+    "Maize": {
+      "hindi": "मक्का",
+      "gujarati": "મકાઈ",
+      "marathi": "मका"
+    },
+    "Mango": {
+      "hindi": "आम",
+      "gujarati": "કેરી",
+      "marathi": "आंबा"
+    },
+    "Masoor Dal": {
+      "hindi": "मसूर दाल",
+      "gujarati": "મસૂર દાળ",
+      "marathi": "मसूर डाळ"
+    },
+    "Methi": {
+      "hindi": "मेथी",
+      "gujarati": "મેથિ",
+      "marathi": "मेथी"
+    },
+    "Milk": {
+      "hindi": "दूध",
+      "gujarati": "દૂધ",
+      "marathi": "दूध"
+    },
+    "Mint": {
+      "hindi": "टकसाल",
+      "gujarati": "ટંકશાળ",
+      "marathi": "पुदीना"
+    },
+    "Mogri": {
+      "hindi": "मोगरी",
+      "gujarati": "મોહરી",
+      "marathi": "मोगरी"
+    },
+    "Moong Dal": {
+      "hindi": "मूंग की दाल",
+      "gujarati": "મૂંગ દાળ",
+      "marathi": "मूग दाल"
+    },
+    "Mushroom": {
+      "hindi": "मशरूम",
+      "gujarati": "મશરિયો",
+      "marathi": "मशरूम"
+    },
+    "Muskmelon": {
+      "hindi": "मस्कमेलन",
+      "gujarati": "કસ્ટમલોન",
+      "marathi": "मस्कमेलॉन"
+    },
+    "Mustard": {
+      "hindi": "सरसों",
+      "gujarati": "સરસવ",
+      "marathi": "मोहरी"
+    },
+    "Mutton": {
+      "hindi": "मटन",
+      "gujarati": "ખડખડાટ",
+      "marathi": "मटण"
+    },
+    "Onion": {
+      "hindi": "प्याज",
+      "gujarati": "ડુંગળી",
+      "marathi": "कांदा"
+    },
+    "Orange": {
+      "hindi": "नारंगी",
+      "gujarati": "નારંગી",
+      "marathi": "केशरी"
+    },
+    "Paneer": {
+      "hindi": "पनीर",
+      "gujarati": "પનીર",
+      "marathi": "पनीर"
+    },
+    "Papadi": {
+      "hindi": "पापदी",
+      "gujarati": "પાપડી",
+      "marathi": "पापडी"
+    },
+    "Papaya": {
+      "hindi": "पपीता",
+      "gujarati": "પપૈન",
+      "marathi": "पपई"
+    },
+    "Parwal": {
+      "hindi": "परवाल",
+      "gujarati": "પર્વત",
+      "marathi": "पारवाल"
+    },
+    "Pea": {
+      "hindi": "मटर",
+      "gujarati": "વટાણા",
+      "marathi": "वाटाणा"
+    },
+    "Peach": {
+      "hindi": "आड़ू",
+      "gujarati": "પીચ",
+      "marathi": "पीच"
+    },
+    "Peanut(Ground Nut)": {
+      "hindi": "पीनट (ग्राउंड नट)",
+      "gujarati": "મગફળી (ગ્રાઉન્ડ અખરોટ)",
+      "marathi": "शेंगदाणा (ग्राउंड नट)"
+    },
+    "Pear": {
+      "hindi": "नाशपाती",
+      "gujarati": "પિઅર",
+      "marathi": "नाशपाती"
+    },
+    "Pineapple": {
+      "hindi": "अनानास",
+      "gujarati": "અનેનાસ",
+      "marathi": "अननस"
+    },
+    "Pista": {
+      "hindi": "पिस्ता",
+      "gujarati": "પીસ્ટા",
+      "marathi": "पिस्ता"
+    },
+    "Plum": {
+      "hindi": "आलूबुखारा",
+      "gujarati": "પીઠ",
+      "marathi": "मनुका"
+    },
+    "Pomegranate": {
+      "hindi": "अनार",
+      "gujarati": "દાડમ",
+      "marathi": "डाळिंब"
+    },
+    "Potato": {
+      "hindi": "आलू",
+      "gujarati": "બટાટા",
+      "marathi": "बटाटा"
+    },
+    "Prawn": {
+      "hindi": "झींगा",
+      "gujarati": "ઈશ્વરી",
+      "marathi": "कोळंबी"
+    },
+    "Pumkin": {
+      "hindi": "कद्दू",
+      "gujarati": "ગુંડો",
+      "marathi": "पमकिन"
+    },
+    "Raddish": {
+      "hindi": "रत्न",
+      "gujarati": "Radંચાણ",
+      "marathi": "रॅडिश"
+    },
+    "Rajama": {
+      "hindi": "राजामा",
+      "gujarati": "રાજમા",
+      "marathi": "राजमा"
+    },
+    "Red Pumkin": {
+      "hindi": "लाल प्यूमकिन",
+      "gujarati": "લાલ રંગનું",
+      "marathi": "लाल पमकिन"
+    },
+    "Rice": {
+      "hindi": "चावल",
+      "gujarati": "ચોખા",
+      "marathi": "तांदूळ"
+    },
+    "Roce Apple": {
+      "hindi": "रोसी सेब",
+      "gujarati": "Roલટ",
+      "marathi": "Roce सफरचंद"
+    },
+    "Saffron": {
+      "hindi": "केसर",
+      "gujarati": "કેસર",
+      "marathi": "केशर"
+    },
+    "Sago": {
+      "hindi": "साबूदाना",
+      "gujarati": "સાગો",
+      "marathi": "साबो"
+    },
+    "Salmon Fish": {
+      "hindi": "सामन मछली",
+      "gujarati": "સ salનન માછલી",
+      "marathi": "सॅल्मन फिश"
+    },
+    "Sardine": {
+      "hindi": "सारडाइन",
+      "gujarati": "સારડીન",
+      "marathi": "सारडिन"
+    },
+    "Seasme Seeds": {
+      "hindi": "सीज़म के बीज",
+      "gujarati": "સિસ્મે બીજ",
+      "marathi": "सीसम बियाणे"
+    },
+    "Sonth": {
+      "hindi": "सोंथ",
+      "gujarati": "પુત્ર",
+      "marathi": "सोनथ"
+    },
+    "Sounf": {
+      "hindi": "सॉन्फ़",
+      "gujarati": "સ oun નફ",
+      "marathi": "Sunf"
+    },
+    "Soya bean": {
+      "hindi": "सोया बीन",
+      "gujarati": "સોયા બીન",
+      "marathi": "सोया बीन"
+    },
+    "Spinach": {
+      "hindi": "पालक",
+      "gujarati": "વિસ્તાર",
+      "marathi": "पालक"
+    },
+    "Straw berry": {
+      "hindi": "स्ट्रॉबेरी",
+      "gujarati": "એક જાતનો અવાજ",
+      "marathi": "पेंढा बेरी"
+    },
+    "Suger Caine": {
+      "hindi": "सुगर कैन",
+      "gujarati": "સુગર કાઈન",
+      "marathi": "SUGER CAINE"
+    },
+    "Sweet Guard": {
+      "hindi": "मधुर रक्षक",
+      "gujarati": "મીઠી ચોકી",
+      "marathi": "गोड गार्ड"
+    },
+    "Sweet Lime": {
+      "hindi": "मीठा चूना",
+      "gujarati": "ચિત્ત્રમ",
+      "marathi": "गोड चुना"
+    },
+    "Sweet Potato": {
+      "hindi": "शराबी",
+      "gujarati": "મીઠા બટાટા",
+      "marathi": "गोड बटाटा"
+    },
+    "Tamarind": {
+      "hindi": "इमली",
+      "gujarati": "આધિપત્ય",
+      "marathi": "चिंचे"
+    },
+    "Tea": {
+      "hindi": "चाय",
+      "gujarati": "ચા",
+      "marathi": "चहा"
+    },
+    "Tendi": {
+      "hindi": "टेंडी",
+      "gujarati": "પણ",
+      "marathi": "टेंडी"
+    },
+    "Tomato": {
+      "hindi": "टमाटर",
+      "gujarati": "ટમેટા",
+      "marathi": "टोमॅटो"
+    },
+    "Turai": {
+      "hindi": "तुराई",
+      "gujarati": "પુષ્પ",
+      "marathi": "तुराई"
+    },
+    "Turmeric": {
+      "hindi": "हल्दी",
+      "gujarati": "હળદર",
+      "marathi": "हळद"
+    },
+    "Urad Dal": {
+      "hindi": "उड़द की दाल",
+      "gujarati": "ઉરદ દાળ",
+      "marathi": "उराद दाल"
+    },
+    "Vaal Papdi": {
+      "hindi": "VAAL PAPDI",
+      "gujarati": "વાલ પપ્પી",
+      "marathi": "वाल पापडी"
+    },
+    "Vinegar": {
+      "hindi": "सिरका",
+      "gujarati": "સરકો",
+      "marathi": "व्हिनेगर"
+    },
+    "Walnut": {
+      "hindi": "अखरोट",
+      "gujarati": "અખરોટ",
+      "marathi": "अक्रोड"
+    },
+    "Water Nut": {
+      "hindi": "पानी का नट",
+      "gujarati": "પાણી",
+      "marathi": "वॉटर नट"
+    },
+    "Watermelon": {
+      "hindi": "तरबूज",
+      "gujarati": "તરબૂચ",
+      "marathi": "टरबूज"
+    },
+    "Wheat": {
+      "hindi": "गेहूँ",
+      "gujarati": "ઘઉં",
+      "marathi": "गहू"
+    },
+    "Yam": {
+      "hindi": "यम",
+      "gujarati": "યમ",
+      "marathi": "याम"
+    },
+    "Yeast": {
+      "hindi": "यीस्ट",
+      "gujarati": "આથો",
+      "marathi": "यीस्ट"
+    },
+    "Brazil Nut": {
+      "hindi": "ब्राजील का अखरोट",
+      "gujarati": "બ્રાઉઝિલ અખરોટ",
+      "marathi": "ब्राझील नट"
+    },
+    "Celery": {
+      "hindi": "अजमोदा",
+      "gujarati": "કચુંબરની વનસ્પતિ",
+      "marathi": "भाजी किंवा कोशिंबीर बनवण्यासाठी उपयुक्त अशी एक वनस्पती"
+    },
+    "Hazel Nut": {
+      "hindi": "हेज़ल नट",
+      "gujarati": "હેઝલ અખરોટ",
+      "marathi": "हेझेल नट"
+    },
+    "Latex": {
+      "hindi": "लाटेकस",
+      "gujarati": "Xtex",
+      "marathi": "लेटेक्स"
+    },
+    "Lettuce": {
+      "hindi": "सलाद",
+      "gujarati": "કોઇ",
+      "marathi": "कोशिंबिरीसाठी वापरण्यात येणारा एक पाला व त्याचे झाड"
+    },
+    "Pecan Nut": {
+      "hindi": "पेकन नट",
+      "gujarati": "લૂંટી બકરા",
+      "marathi": "पेकन नट"
+    },
+    "Polish Dust": {
+      "hindi": "पोलिश धूल",
+      "gujarati": "પોલિશ ધૂળ",
+      "marathi": "पोलिश धूळ"
+    },
+    "Lasan": {
+      "hindi": "लसान",
+      "gujarati": "લાસન",
+      "marathi": "लसन"
+    },
+    "bakro": {
+      "hindi": "बकरो",
+      "gujarati": "બકરો",
+      "marathi": "बाक्रो"
+    },
+    "kela": {
+      "hindi": "केला",
+      "gujarati": "કેલા",
+      "marathi": "केला"
+    },
+    "bhaat": {
+      "hindi": "भात",
+      "gujarati": "ભાટ",
+      "marathi": "भट"
+    },
+    "kando": {
+      "hindi": "कांडो",
+      "gujarati": "કાંડો",
+      "marathi": "कांडो"
+    },
+    "margi": {
+      "hindi": "मार्गी",
+      "gujarati": "માર્ગી",
+      "marathi": "मार्गी"
+    },
+    "machar": {
+      "hindi": "मचर",
+      "gujarati": "માચર",
+      "marathi": "माचर"
+    },
+    "Dander": {
+      "hindi": "रूसी",
+      "gujarati": "ડેન્ડર",
+      "marathi": "डँडर"
+    },
+    "Ageratum Conyzoides": {
+      "hindi": "Ageratum Conyzoides",
+      "gujarati": "Ageratum Conyzoides",
+      "marathi": "Ageratum Conyzoides"
+    },
+    "Carica Papaya": {
+      "hindi": "कैरीका पपीता",
+      "gujarati": "કેરીકા પપૈયા",
+      "marathi": "कॅरीका पपई"
+    },
+    "non jain": {
+      "hindi": "गैर जैन",
+      "gujarati": "બિન જૈન",
+      "marathi": "जैन नसलेले"
+    },
+    "non veg": {
+      "hindi": "मांसाहारी",
+      "gujarati": "માંસાહારી",
+      "marathi": "मांसाहारी"
+    },
+    "veg": {
+      "hindi": "शाकाहारी",
+      "gujarati": "શાકાહારી",
+      "marathi": "शाकाहारी"
+    }
+  }
+}
