@@ -42,34 +42,9 @@ export default function ActualPatchTest() {
   const [pendingRedirect, setPendingRedirect] = useState(false);
 
 
-  useEffect(() => {
-    const fetchPatient = async () => {
-      try {
-        const response = await apiFetch(`${BASE_URL}/api/patients/${patientId}`);
-        if (!response.ok) throw new Error('Failed to fetch patient');
-        const data = await response.json();
-        setPatient(data.patient || data);
-      } catch (err) {
-        setPatient(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPatient();
-  }, [patientId]);
+  // fetchPatient effect removed; merged into parallel fetch
 
-  const fetchAllergenList = async () => {
-    try {
-      const response = await apiFetch(`${BASE_URL}/api/actual-patch-testing`);
-      if (!response.ok) throw new Error('Failed to fetch allergens');
-      const data = await response.json();
-      // Sort allergens alphabetically by allergen name
-      const sortedData = data.sort((a, b) => a.allergen.localeCompare(b.allergen));
-      setAllergens(sortedData);
-    } catch (err) {
-      setAddError('Could not load allergens');
-    }
-  };
+  // fetchAllergenList removed as a standalone function; merged into parallel fetch
 
   const handleCloseErrorDialog = () => {
     setErrorDialog({ open: false, message: '' });
@@ -114,6 +89,10 @@ export default function ActualPatchTest() {
       const createData = await createResponse.json();
       if (!createResponse.ok) {
         throw new Error(createData.message || 'Failed to save new report after deletion');
+      }
+      
+      if (createData && createData._id) {
+        setExistingReportId(createData._id);
       }
       
       setSavePatchTestStatus({
@@ -192,8 +171,83 @@ export default function ActualPatchTest() {
   };
 
   useEffect(() => {
-    fetchAllergenList();
-  }, []);
+    const fetchData = async () => {
+      try {
+        // 1. Start Patient and Allergens fetch in parallel
+        const patientPromise = apiFetch(`${BASE_URL}/api/patients/${patientId}`);
+        const allergensPromise = apiFetch(`${BASE_URL}/api/actual-patch-testing`);
+
+        // 2. Resolve Patient first to get the MongoDB _id
+        const patientRes = await patientPromise;
+        let patientData = null;
+        if (patientRes.ok) {
+          const pData = await patientRes.json();
+          patientData = pData.patient || pData;
+          setPatient(patientData);
+        } else {
+          setPatient(null);
+        }
+
+        // 3. Start Patch Test fetch using the retrieved patient._id
+        const patchPromise = patientData && patientData._id 
+          ? apiFetch(`${BASE_URL}/api/patient-patch-test/by-patient/${patientData._id}`)
+          : Promise.resolve(null);
+
+        // 4. Resolve remaining promises in parallel
+        const [allergensRes, patchRes] = await Promise.all([allergensPromise, patchPromise]);
+
+        // 5. Process Allergens
+        let fetchedAllergens = [];
+        if (allergensRes.ok) {
+          const aData = await allergensRes.json();
+          fetchedAllergens = aData.sort((a, b) => a.allergen.localeCompare(b.allergen));
+          setAllergens(fetchedAllergens);
+        } else {
+          setAddError('Could not load allergens');
+        }
+
+        // 6. Process Patch Test Data
+        if (patchRes && patchRes.ok) {
+          const patchData = await patchRes.json();
+          if (Array.isArray(patchData) && patchData.length > 0) {
+            const report = patchData[0];
+            if (report._id) setExistingReportId(report._id);
+            if (report.date) setSelectedDate(report.date.split('T')[0]);
+            if (report.advice) setAdvice(report.advice);
+
+            if (Array.isArray(report.allergies)) {
+              const resultsMap = {};
+              const checksMap = {};
+              const savedByAllergyName = {};
+
+              report.allergies.forEach(item => {
+                if (item.allergy) {
+                  savedByAllergyName[item.allergy.trim().toLowerCase()] = item;
+                }
+              });
+
+              fetchedAllergens.forEach(row => {
+                const saved = savedByAllergyName[(row.allergen || '').trim().toLowerCase()];
+                if (saved) {
+                  resultsMap[row._id] = saved.result || '';
+                  checksMap[row._id] = !!saved.check;
+                }
+              });
+
+              setAllergenResults(resultsMap);
+              setAllergenChecks(checksMap);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error in fetching parallel data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [patientId]);
 
   const handleAddAllergen = async () => {
     setAddError('');
@@ -268,6 +322,24 @@ export default function ActualPatchTest() {
     setAllergenResults(prev => ({ ...prev, [id]: value }));
   };
 
+  const handleResultKeyDown = (e, index) => {
+    if (e.key === 'ArrowDown' || e.key === 'Enter') {
+      e.preventDefault();
+      const nextInput = document.querySelector(`[data-result-index="${index + 1}"]`);
+      if (nextInput) {
+        nextInput.focus();
+        if (nextInput.select) nextInput.select();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevInput = document.querySelector(`[data-result-index="${index - 1}"]`);
+      if (prevInput) {
+        prevInput.focus();
+        if (prevInput.select) prevInput.select();
+      }
+    }
+  };
+
   const handleCheckChange = (id) => {
     setAllergenChecks(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -331,6 +403,10 @@ export default function ActualPatchTest() {
         }
       }
       
+      if (data && data._id) {
+        setExistingReportId(data._id);
+      }
+      
       setSavePatchTestStatus({ open: true, message: 'Patch test saved successfully!', severity: 'success' });
       setPendingRedirect(true);
       setDoctorSelectOpen(true);
@@ -340,13 +416,7 @@ export default function ActualPatchTest() {
     }
   };
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
+  // Removed full-page loading early return
 
   return (
     <Container maxWidth="lg" sx={{ mt: 2 }}>
@@ -469,9 +539,16 @@ export default function ActualPatchTest() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {allergens.length === 0 ? (
+                {loading ? (
                   <TableRow>
-                    <TableCell colSpan={4} align="center" sx={{ color: '#888' }}>
+                    <TableCell colSpan={4} align="center" sx={{ py: 5 }}>
+                      <CircularProgress size={30} sx={{ color: '#2563eb' }} />
+                      <Typography variant="body2" sx={{ mt: 1, color: '#666' }}>Loading allergies...</Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : allergens.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center" sx={{ color: '#888', py: 3 }}>
                       No allergies added yet.
                     </TableCell>
                   </TableRow>
@@ -485,6 +562,8 @@ export default function ActualPatchTest() {
                           size="small"
                           value={allergenResults[row._id] || ''}
                           onChange={e => handleResultChange(row._id, e.target.value)}
+                          onKeyDown={e => handleResultKeyDown(e, idx)}
+                          inputProps={{ 'data-result-index': idx }}
                           placeholder="Enter result"
                         />
                       </TableCell>

@@ -266,25 +266,36 @@ const InstructionReport = ({ data }) => {
                 <Text style={{ fontFamily: 'Noto Sans Gujarati' }}>No Patient Image</Text>
             </View>
             )}
-            <Text style={{ marginTop: 10, fontSize: 14, fontWeight: 'bold', fontFamily: 'Noto Sans Gujarati' }}>
-              {data.patient.basicInfo.name}
-            </Text>
           </View>
         )}
-        {instructions.length > 0 && (
+        {instructions.filter(inst => inst && typeof inst === 'string' && inst.trim() !== '').length > 0 && (
           <View style={{ marginBottom: 15 }}>
             <Text style={styles.subHeader}>Instructions for the patient</Text>
-            {instructions.map((inst, i) => (
-              <Text key={`instruction-${i}`} style={{ ...styles.listItem, fontFamily: getFontFamily(selectedLanguage) }}>• {inst}</Text>
+            {instructions.filter(inst => inst && typeof inst === 'string' && inst.trim() !== '').map((inst, i) => (
+              <View key={`instruction-${i}`} style={{ flexDirection: 'row', marginBottom: 5, width: 495 }}>
+                <View style={{ width: 15, alignItems: 'flex-start' }}>
+                  <Text style={{ fontSize: 11, fontFamily: getFontFamily(selectedLanguage) }}>{'\u2022'}</Text>
+                </View>
+                <View style={{ width: 480 }}>
+                  <Text style={{ fontSize: 11, lineHeight: 1.4, fontFamily: getFontFamily(selectedLanguage) }}>{inst}</Text>
+                </View>
+              </View>
             ))}
           </View>
         )}
-        {foodNames.length > 0 && (
+        {foodNames.filter(food => food && typeof food === 'string' && food.trim() !== '').length > 0 && (
           <View>
             <Text style={styles.subHeader}>Following food items should be avoided.</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-              {foodNames.map((food, i) => (
-                <Text key={`food-avoid-${i}`} style={{ ...styles.listItem, width: '32%', marginBottom: 4, fontFamily: getFontFamily(selectedLanguage) }}>• {food}</Text>
+              {foodNames.filter(food => food && typeof food === 'string' && food.trim() !== '').map((food, i) => (
+                <View key={`food-avoid-${i}`} style={{ width: '32%', flexDirection: 'row', marginBottom: 4 }}>
+                  <View style={{ width: 15, alignItems: 'flex-start' }}>
+                    <Text style={{ fontSize: 11, fontFamily: getFontFamily(selectedLanguage) }}>{'\u2022'}</Text>
+                  </View>
+                  <View style={{ width: 140 }}>
+                    <Text style={{ fontSize: 11, lineHeight: 1.3, fontFamily: getFontFamily(selectedLanguage) }}>{food}</Text>
+                  </View>
+                </View>
               ))}
             </View>
           </View>

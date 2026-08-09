@@ -102,13 +102,13 @@ function PatientPrescriptions() {
         }
     };
 
-    const formatInstructions = (instructions) => {
+    const formatInstructions = (instructions, skipOther = true) => {
         const labels = [];
         if (instructions.beforeFood) labels.push('Before Food');
         if (instructions.afterFood) labels.push('After Food');
         if (instructions.withFood) labels.push('With Food');
-        if (instructions.other) labels.push(instructions.other);
-        return labels.length > 0 ? labels.join(', ') : 'No specific instructions';
+        if (!skipOther && instructions.other) labels.push(instructions.other);
+        return labels.length > 0 ? labels.join(', ') : '';
     };
 
     const getPaperDimensions = (paperSize) => {
@@ -133,11 +133,13 @@ function PatientPrescriptions() {
           dosage: d(m.dosage),
           dosageRaw: m.dosage,
             duration: d(m.duration.toString()),
-          durationRaw: m.duration,
-            instructions: lang === 'english'
-            ? formatInstructions(m.instructions)
-              : await translateText(formatInstructions(m.instructions), lang),
-          timings: m.timings
+            durationRaw: m.duration,
+            instructionsText: lang === 'english'
+                ? formatInstructions(m.instructions, false)
+                : await translateText(formatInstructions(m.instructions, false), lang),
+            rawInstructions: m.instructions,
+            isBelow: m.isBelow,
+            timings: m.timings
         })));
         const timingMap = {
           morning: await t('Morning'),
@@ -151,13 +153,21 @@ function PatientPrescriptions() {
           return order.filter(key => timings[key]).map(key => timingMap[key]).join('-') || noneLabel;
         };
         const daysLabel = await t('days');
+        const hasCustomInstruction = prescription.medicines.some(m => !m.isBelow && m.instructions && m.instructions.other && m.instructions.other.trim());
+        const timingColumnHeader = await t(hasCustomInstruction ? 'Instruction' : 'Timing');
         const nextVisitLabel = await t('Next Visit in ');
         const followUpUnitLabel = await t(prescription.followUp.unit);
         let dateLabel = 'Date:';
         let dateValue = new Date(prescription.prescriptionDate).toLocaleDateString();
-        const otherInstructions = prescription.medicines
-          .map(m => m.instructions && m.instructions.other)
-          .filter(Boolean);
+        const otherInstructions = translatedMedicines
+            .filter(m => m.isBelow && m.instructionsText)
+            .map(m => `${m.medicineName}: ${m.instructionsText}`);
+        if (prescription.commonBelowInstruction && prescription.commonBelowInstruction.trim()) {
+            const translatedCommon = lang === 'english'
+                ? prescription.commonBelowInstruction.trim()
+                : await translateText(prescription.commonBelowInstruction.trim(), lang);
+            otherInstructions.push(translatedCommon);
+        }
       const doctorName = prescription.selectedDoctor || 'DR. VIPUL SHAH';
   
         return `
@@ -203,7 +213,7 @@ function PatientPrescriptions() {
                   <tr style="background-color: rgb(126, 148, 171);">
                     <th style="padding: 6px 8px; text-align: left; font-size: 16px;">Medicine</th>
                     <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Dosage</th>
-                    <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Timing</th>
+                    <th style="padding: 6px 8px; text-align: center; font-size: 16px;">${timingColumnHeader}</th>
                     <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Duration</th>
                     <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Qty</th>
                   </tr>
@@ -213,7 +223,7 @@ function PatientPrescriptions() {
                   <tr style="font-size: 14px; border-bottom: 1px solid black;">
                     <td style="padding: 6px 8px;">${m.medicineName}</td>
                     <td style="padding: 6px 8px; text-align: center;">${m.dosage}</td>
-                    <td style="padding: 6px 8px; text-align: center;">${getTimingPatternLocalized(m.timings)}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                     <td style="padding: 6px 8px; text-align: center;">${m.duration} ${daysLabel}</td>
                     <td style="padding: 6px 8px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                   </tr>
@@ -224,16 +234,16 @@ function PatientPrescriptions() {
             <section style="font-size: 13px; margin-bottom: 16px;">
               ${prescription.additionalNotes ? `<p><strong>Advice:</strong> ${prescription.additionalNotes}</p>` : ''}
               ${prescription.tests ? `<p><strong>Tests:</strong> ${prescription.tests}</p>` : ''}
+              ${otherInstructions.length > 0 ? `
+                <div style="margin-top: 8px; margin-bottom: 12px;">
+                  <strong>Other Instructions:</strong>
+                  <ul style="margin: 4px 0 0 16px; padding: 0; list-style-position: outside;">
+                    ${otherInstructions.map(instr => `<li style="margin-bottom: 4px;">${escapeHtml(instr)}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
               <p><strong>${nextVisitLabel} ${d(prescription.followUp.duration)} ${followUpUnitLabel}</strong></p>
             </section>
-            ${otherInstructions.length > 0 ? `
-              <section style="font-size: 13px; margin-bottom: 16px;">
-                <strong>Other Instructions:</strong>
-                <ul style="margin: 4px 0 0 16px; padding: 0; list-style-position: outside;">
-                  ${otherInstructions.map(instr => `<li style="margin-bottom: 4px;">${escapeHtml(instr)}</li>`).join('')}
-                </ul>
-              </section>
-            ` : ''}
             <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center; margin-top: 70%;">
               <p style="margin: 2px 0 0; font-size: 16px;">${doctorName}</p>
             </div>
@@ -276,9 +286,11 @@ function PatientPrescriptions() {
             dosageRaw: m.dosage,
             duration: d(m.duration.toString()),
             durationRaw: m.duration,
-            instructions: lang === 'english'
-                ? formatInstructions(m.instructions)
-                : await translateText(formatInstructions(m.instructions), lang),
+            instructionsText: lang === 'english'
+                ? formatInstructions(m.instructions, false)
+                : await translateText(formatInstructions(m.instructions, false), lang),
+            rawInstructions: m.instructions,
+            isBelow: m.isBelow,
             timings: m.timings
         })));
         const timingMap = {
@@ -293,13 +305,21 @@ function PatientPrescriptions() {
             return order.filter(key => timings[key]).map(key => timingMap[key]).join('-') || noneLabel;
         };
         const daysLabel = await t('days');
+        const hasCustomInstruction = prescription.medicines.some(m => !m.isBelow && m.instructions && m.instructions.other && m.instructions.other.trim());
+        const timingColumnHeader = await t(hasCustomInstruction ? 'Instruction' : 'Timing');
         const nextVisitLabel = await t('Next Visit in ');
         const followUpUnitLabel = await t(prescription.followUp.unit);
         let dateLabel = 'Date:';
         let dateValue = new Date(prescription.prescriptionDate).toLocaleDateString();
-        const otherInstructions = prescription.medicines
-            .map(m => m.instructions && m.instructions.other)
-            .filter(Boolean);
+        const otherInstructions = translatedMedicines
+            .filter(m => m.isBelow && m.instructionsText)
+            .map(m => `${m.medicineName}: ${m.instructionsText}`);
+        if (prescription.commonBelowInstruction && prescription.commonBelowInstruction.trim()) {
+            const translatedCommon = lang === 'english'
+                ? prescription.commonBelowInstruction.trim()
+                : await translateText(prescription.commonBelowInstruction.trim(), lang);
+            otherInstructions.push(translatedCommon);
+        }
         const doctorName = prescription.selectedDoctor || 'DR. VIPUL SHAH';
         return `
           <div id="prescription-content" style="width: ${width}; height: ${height}; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; background: white; color: #374151; position: relative; margin: 0;">
@@ -344,7 +364,7 @@ function PatientPrescriptions() {
                     <tr style=" background-color:rgb(126, 148, 171);">
                       <th style="padding: 6px 8px; text-align: left; font-size: 16px;">Medicine</th>
                       <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Dosage</th>
-                      <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Timing</th>
+                      <th style="padding: 6px 8px; text-align: center; font-size: 16px;">${timingColumnHeader}</th>
                       <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Duration</th>
                       <th style="padding: 6px 8px; text-align: center; font-size: 16px;">Qty</th>
                     </tr>
@@ -354,7 +374,7 @@ function PatientPrescriptions() {
                     <tr style="font-size: 14px; border-bottom: 1px solid black;">
                       <td style="padding: 6px 8px;">${m.medicineName}</td>
                       <td style="padding: 6px 8px; text-align: center;">${m.dosage}</td>
-                      <td style="padding: 6px 8px; text-align: center;">${getTimingPatternLocalized(m.timings)}</td>
+                      <td style="padding: 6px 8px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                       <td style="padding: 6px 8px; text-align: center;">${m.duration} ${daysLabel}</td>
                       <td style="padding: 6px 8px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                     </tr>
@@ -365,16 +385,16 @@ function PatientPrescriptions() {
               <section style="font-size: 13px; margin-bottom: 16px;">
                 ${prescription.additionalNotes ? `<p><strong>Advice:</strong> ${prescription.additionalNotes}</p>` : ''}
                 ${prescription.tests ? `<p><strong>Tests:</strong> ${prescription.tests}</p>` : ''}
+                ${otherInstructions.length > 0 ? `
+                  <div style="margin-top: 8px; margin-bottom: 12px;">
+                    <strong>Other Instructions:</strong>
+                    <ul style="margin: 4px 0 0 16px; padding: 0;">
+                      ${otherInstructions.map(instr => `<li style="margin-bottom: 4px;">${escapeHtml(instr)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
                 <p><strong>${nextVisitLabel} ${d(prescription.followUp.duration)} ${followUpUnitLabel}</strong></p>
               </section>
-              ${otherInstructions.length > 0 ? `
-                <section style="font-size: 13px; margin-bottom: 16px;">
-                  <strong>Other Instructions:</strong>
-                  <ul style="margin: 4px 0 0 16px; padding: 0;">
-                    ${otherInstructions.map(instr => `<li>${escapeHtml(instr)}</li>`).join('')}
-                  </ul>
-                </section>
-              ` : ''}
               <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center; margin-top: 80%;">
                 <p style="margin: 2px 0 0; font-size: 16px;">${doctorName}</p>
               </div>
@@ -417,9 +437,11 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
         dosageRaw: m.dosage,
         duration: d(m.duration.toString()),
         durationRaw: m.duration,
-        instructions: lang === 'english'
-            ? formatInstructions(m.instructions)
-            : await translateText(formatInstructions(m.instructions), lang),
+        instructionsText: lang === 'english'
+            ? formatInstructions(m.instructions, false)
+            : await translateText(formatInstructions(m.instructions, false), lang),
+        rawInstructions: m.instructions,
+        isBelow: m.isBelow,
         timings: m.timings
     })));
     const timingMap = {
@@ -434,13 +456,21 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
         return order.filter(key => timings[key]).map(key => timingMap[key]).join('-') || noneLabel;
     };
     const daysLabel = await t('days');
+    const hasCustomInstruction = prescription.medicines.some(m => !m.isBelow && m.instructions && m.instructions.other && m.instructions.other.trim());
+    const timingColumnHeader = await t(hasCustomInstruction ? 'Instruction' : 'Timing');
     const nextVisitLabel = await t('Next Visit in ');
     const followUpUnitLabel = await t(prescription.followUp.unit);
     let dateLabel = 'Date:';
     let dateValue = new Date(prescription.prescriptionDate).toLocaleDateString();
-    const otherInstructions = prescription.medicines
-        .map(m => m.instructions && m.instructions.other)
-        .filter(Boolean);
+    const otherInstructions = translatedMedicines
+        .filter(m => m.isBelow && m.instructionsText)
+        .map(m => `${m.medicineName}: ${m.instructionsText}`);
+    if (prescription.commonBelowInstruction && prescription.commonBelowInstruction.trim()) {
+        const translatedCommon = lang === 'english'
+            ? prescription.commonBelowInstruction.trim()
+            : await translateText(prescription.commonBelowInstruction.trim(), lang);
+        otherInstructions.push(translatedCommon);
+    }
     const doctorName = prescription.selectedDoctor || 'DR. VIPUL SHAH';
     return `
     <div id="prescription-content" style="width: ${width}; height: ${height}; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; background: white; color: #374151; position: relative; margin: 0;">
@@ -485,7 +515,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
             <tr style="font-size: 12px; background-color: rgb(126, 148, 171);">
               <th style="padding: 4px 6px; text-align: left; font-size: 12px;">Medicine</th>
               <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Dosage</th>
-              <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Timing</th>
+              <th style="padding: 4px 6px; text-align: center; font-size: 12px;">${timingColumnHeader}</th>
               <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Duration</th>
               <th style="padding: 4px 6px; text-align: center; font-size: 11px;">Qty</th>
             </tr>
@@ -495,7 +525,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
             <tr style="font-size: 11px; border-bottom: 1px solid black;">
               <td style="padding: 4px 6px;">${m.medicineName}</td>
               <td style="padding: 4px 6px; text-align: center;">${m.dosage}</td>
-              <td style="padding: 4px 6px; text-align: center;">${getTimingPatternLocalized(m.timings)}</td>
+              <td style="padding: 4px 6px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
               <td style="padding: 4px 6px; text-align: center;">${m.duration} ${daysLabel}</td>
               <td style="padding: 4px 6px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
             </tr>
@@ -506,16 +536,16 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
       <section style="font-size: 10px; margin-bottom: 8px;">
         ${prescription.additionalNotes ? `<p><strong>Advice:</strong> ${prescription.additionalNotes}</p>` : ''}
         ${prescription.tests ? `<p><strong>Tests:</strong> ${prescription.tests}</p>` : ''}
+        ${otherInstructions.length > 0 ? `
+          <div style="margin-top: 6px; margin-bottom: 8px;">
+            <strong>Other Instructions:</strong>
+            <ul style="margin: 4px 0 0 16px; padding: 0;">
+              ${otherInstructions.map(instr => `<li>${escapeHtml(instr)}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
         <p><strong>${nextVisitLabel} ${d(prescription.followUp.duration)} ${followUpUnitLabel}</strong></p>
       </section>
-      ${otherInstructions.length > 0 ? `
-        <section style="font-size: 10px; margin-bottom: 8px;">
-          <strong>Other Instructions:</strong>
-          <ul style="margin: 4px 0 0 16px; padding: 0;">
-            ${otherInstructions.map(instr => `<li>${escapeHtml(instr)}</li>`).join('')}
-          </ul>
-        </section>
-      ` : ''}
       <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center; margin-top: 60%;">
         <p style="margin: 2px 0 0; font-size: 10px;">${doctorName}</p>
       </div>
@@ -559,9 +589,11 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
             dosageRaw: m.dosage,
             duration: d(m.duration.toString()),
             durationRaw: m.duration,
-            instructions: lang === 'english'
-                ? formatInstructions(m.instructions)
-                : await translateText(formatInstructions(m.instructions), lang),
+            instructionsText: lang === 'english'
+                ? formatInstructions(m.instructions, false)
+                : await translateText(formatInstructions(m.instructions, false), lang),
+            rawInstructions: m.instructions,
+            isBelow: m.isBelow,
             timings: m.timings
         })));
         const timingMap = {
@@ -576,13 +608,21 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
             return order.filter(key => timings[key]).map(key => timingMap[key]).join('-') || noneLabel;
         };
         const daysLabel = await t('days');
+        const hasCustomInstruction = prescription.medicines.some(m => !m.isBelow && m.instructions && m.instructions.other && m.instructions.other.trim());
+        const timingColumnHeader = await t(hasCustomInstruction ? 'Instruction' : 'Timing');
         const nextVisitLabel = await t('Next Visit in ');
         const followUpUnitLabel = await t(prescription.followUp.unit);
         let dateLabel = 'Date:';
         let dateValue = new Date(prescription.prescriptionDate).toLocaleDateString();
-        const otherInstructions = prescription.medicines
-            .map(m => m.instructions && m.instructions.other)
-            .filter(Boolean);
+        const otherInstructions = translatedMedicines
+            .filter(m => m.isBelow && m.instructionsText)
+            .map(m => `${m.medicineName}: ${m.instructionsText}`);
+        if (prescription.commonBelowInstruction && prescription.commonBelowInstruction.trim()) {
+            const translatedCommon = lang === 'english'
+                ? prescription.commonBelowInstruction.trim()
+                : await translateText(prescription.commonBelowInstruction.trim(), lang);
+            otherInstructions.push(translatedCommon);
+        }
         const doctorName = prescription.selectedDoctor || 'DR. VIPUL SHAH';
         return `
           <div id="prescription-content" style="width: ${width}; height: ${height}; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; background: white; color: #374151; position: relative; margin: 0;">
@@ -628,7 +668,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
                     <tr style="font-size: 12px; background-color: rgb(126, 148, 171);">
                       <th style="padding: 4px 6px; text-align: left; font-size: 12px;">Medicine</th>
                       <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Dosage</th>
-                      <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Timing</th>
+                      <th style="padding: 4px 6px; text-align: center; font-size: 12px;">${timingColumnHeader}</th>
                       <th style="padding: 4px 6px; text-align: center; font-size: 12px;">Duration</th>
                       <th style="padding: 4px 6px; text-align: center; font-size: 11px;">Qty</th>
                     </tr>
@@ -638,7 +678,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
                     <tr style="font-size: 11px; border-bottom: 1px solid black;">
                       <td style="padding: 4px 6px;">${m.medicineName}</td>
                       <td style="padding: 4px 6px; text-align: center;">${m.dosage}</td>
-                      <td style="padding: 4px 6px; text-align: center;">${getTimingPatternLocalized(m.timings)}</td>
+                      <td style="padding: 4px 6px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                       <td style="padding: 4px 6px; text-align: center;">${m.duration} ${daysLabel}</td>
                       <td style="padding: 4px 6px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                     </tr>
@@ -649,16 +689,16 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
               <section style="font-size: 10px; margin-bottom: 8px;">
                 ${prescription.additionalNotes ? `<p><strong>Advice:</strong> ${prescription.additionalNotes}</p>` : ''}
                 ${prescription.tests ? `<p><strong>Tests:</strong> ${prescription.tests}</p>` : ''}
+                ${otherInstructions.length > 0 ? `
+                  <div style="margin-top: 6px; margin-bottom: 8px;">
+                    <strong>Other Instructions:</strong>
+                    <ul style="margin: 4px 0 0 16px; padding: 0;">
+                      ${otherInstructions.map(instr => `<li>${escapeHtml(instr)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
                 <p><strong>${nextVisitLabel} ${d(prescription.followUp.duration)} ${followUpUnitLabel}</strong></p>
               </section>
-              ${otherInstructions.length > 0 ? `
-                <section style="font-size: 10px; margin-bottom: 8px;">
-                  <strong>Other Instructions:</strong>
-                  <ul style="margin: 4px 0 0 16px; padding: 0;">
-                    ${otherInstructions.map(instr => `<li>${escapeHtml(instr)}</li>`).join('')}
-                  </ul>
-                </section>
-              ` : ''}
               <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center; margin-top: 80%;">
                 <p style="margin: 2px 0 0; font-size: 10px;">${doctorName}</p>
               </div>
@@ -694,8 +734,8 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
     };
 
     const handleDownloadPDF = async (prescription, patient, lang = 'english') => {
-        const paperSize = location.state?.paperSize || 'A4';
-        const useOwnLetterhead = location.state?.useOwnLetterhead || false;
+        const paperSize = prescription?.paperSize || location.state?.paperSize || 'A4';
+        const useOwnLetterhead = prescription?.useOwnLetterhead !== undefined ? prescription.useOwnLetterhead : (location.state?.useOwnLetterhead || false);
         const { width, height } = getPaperDimensions(paperSize);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = await generatePDFContent(prescription, patient, lang, useOwnLetterhead, width, height, paperSize);
@@ -749,8 +789,8 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
     };
 
     const handleViewPDF = async (prescription, patient, lang = 'english') => {
-        const paperSize = location.state?.paperSize || 'A4';
-        const useOwnLetterhead = location.state?.useOwnLetterhead || false;
+        const paperSize = prescription?.paperSize || location.state?.paperSize || 'A4';
+        const useOwnLetterhead = prescription?.useOwnLetterhead !== undefined ? prescription.useOwnLetterhead : (location.state?.useOwnLetterhead || false);
         const { width, height } = getPaperDimensions(paperSize);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = await generatePDFContent(prescription, patient, lang, useOwnLetterhead, width, height, paperSize);

@@ -11,9 +11,45 @@ const allergenCategories = [
   { key: 'Dusts', label: 'Dusts' },
   { key: 'Insects', label: 'Insects' },
   { key: 'Dander/Epithelia', label: 'Dander/Epithelia' },
-  { key: 'Foods', label: 'Foods' },
+  { key: 'Foods', label: 'Veg Food' },
+  { key: 'Non Jain', label: 'Non Jain' },
+  { key: 'Non-Veg', label: 'Non-Veg' },
   { key: 'Miscellaneous', label: 'Miscellaneous' },
 ];
+
+const getFoodType = (allergen) => {
+  if (!allergen) return '';
+  if (allergen.foodCategory) {
+    switch (allergen.foodCategory.toLowerCase()) {
+      case 'veg': return 'Veg';
+      case 'jain': return 'Non Jain';
+      case 'non-veg': return 'Non-Veg';
+    }
+  }
+  if (!allergen.name?.english) return '';
+  const foodName = allergen.name.english.toLowerCase();
+  const nonVegFoods = [
+    'chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'crab', 'lobster',
+    'oyster', 'clam', 'mussel', 'scallop', 'squid', 'octopus', 'duck',
+    'turkey', 'goose', 'quail', 'pheasant', 'venison', 'rabbit', 'goat',
+    'mutton', 'bacon', 'ham', 'sausage', 'pepperoni', 'salami', 'anchovy',
+    'tuna', 'salmon', 'cod', 'halibut', 'mackerel', 'sardine', 'herring',
+    'trout', 'catfish', 'tilapia', 'swordfish', 'mahi mahi', 'grouper',
+    'red snapper', 'sea bass', 'egg', 'eggs', 'yolk', 'albumin',
+    'ovalbumin', 'ovomucoid', 'lysozyme'
+  ];
+  const jainFoods = [
+    'potato', 'onion', 'garlic', 'ginger', 'carrot', 'radish', 'turnip',
+    'beetroot', 'sweet potato', 'yam', 'taro', 'cassava', 'parsnip',
+    'rutabaga', 'celeriac', 'horseradish', 'wasabi', 'leek', 'shallot',
+    'chive', 'scallion', 'spring onion', 'asafoetida', 'hing', 'mushroom',
+    'truffle', 'morel', 'chanterelle', 'shiitake', 'oyster mushroom',
+    'portobello', 'cremini', 'enoki', 'maitake', 'reishi'
+  ];
+  if (nonVegFoods.some(food => foodName.includes(food))) return 'Non-Veg';
+  if (jainFoods.some(food => foodName.includes(food))) return 'Non Jain';
+  return 'Veg';
+};
 
 const categoryOrder = [
   'pollens',
@@ -58,24 +94,80 @@ const AddInstruction = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    // Fetch allergies in parallel and sort after fetching
-    apiFetch(`${process.env.REACT_APP_CLIENT_BASE_URL}/api/allergies/all`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.success && Array.isArray(data.data)) {
-          setAllergies(data.data);
+    const fetchData = async () => {
+      try {
+        const [allergiesRes, existingRes] = await Promise.all([
+          apiFetch(`${process.env.REACT_APP_CLIENT_BASE_URL}/api/allergies/all`),
+          patientId ? apiFetch(`${process.env.REACT_APP_CLIENT_BASE_URL}/api/save-instruction/by-patient/${patientId}`) : Promise.resolve(null)
+        ]);
+
+        let fetchedAllergies = [];
+        if (allergiesRes.ok) {
+          const data = await allergiesRes.json();
+          if (data && data.success && Array.isArray(data.data)) {
+            fetchedAllergies = data.data;
+            setAllergies(fetchedAllergies);
+          } else {
+            setAllergies([]);
+            setError('No data found.');
+          }
         } else {
+          setError('Failed to fetch allergies');
           setAllergies([]);
-          setError('No data found.');
         }
+
+        if (existingRes && existingRes.ok) {
+          const responseData = await existingRes.json();
+          if (responseData && responseData.success && Array.isArray(responseData.data) && responseData.data.length > 0) {
+            const savedDoc = responseData.data[0];
+
+            if (Array.isArray(savedDoc.allergiesImage)) {
+              const imageIds = savedDoc.allergiesImage.map(img => typeof img === 'object' && img._id ? String(img._id) : String(img));
+              setSelectedImages(imageIds);
+            }
+
+            const restoredInstructions = [];
+            const savedInstructions = savedDoc.instructions || [];
+            const savedFoods = savedDoc.foods || [];
+
+            fetchedAllergies.forEach(allergy => {
+              const cat = (allergy.category || '').toLowerCase();
+              if (cat === 'foods' || cat === 'miscellaneous') {
+                const isFoodChecked = savedFoods.some(food => {
+                  const foodEng = (typeof food === 'object' ? food.english : food) || '';
+                  const allergyEng = (typeof allergy.name === 'object' ? allergy.name.english : allergy.name) || '';
+                  return foodEng.trim().toLowerCase() === allergyEng.trim().toLowerCase();
+                });
+                if (isFoodChecked) {
+                  restoredInstructions.push(`${allergy._id}-0`);
+                }
+              } else {
+                if (Array.isArray(allergy.instructions)) {
+                  allergy.instructions.forEach((inst, idx) => {
+                    const instEng = (typeof inst === 'object' ? inst.english : inst) || '';
+                    const isInstChecked = savedInstructions.some(sInst => {
+                      const sEng = (typeof sInst === 'object' ? sInst.english : sInst) || '';
+                      return sEng.trim().toLowerCase() === instEng.trim().toLowerCase();
+                    });
+                    if (isInstChecked) {
+                      restoredInstructions.push(`${allergy._id}-${idx}`);
+                    }
+                  });
+                }
+              }
+            });
+
+            setSelectedInstructions(restoredInstructions);
+          }
+        }
+      } catch (err) {
+        setError('Failed to fetch data');
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        setError('Failed to fetch allergies');
-        setAllergies([]);
-        setLoading(false);
-      });
-  }, []);
+      }
+    };
+    fetchData();
+  }, [patientId]);
 
   const handleInstructionCheckbox = (allergyId, instructionIndex) => {
     const instructionKey = `${allergyId}-${instructionIndex}`;
@@ -94,11 +186,68 @@ const AddInstruction = () => {
     );
   };
 
-  const isFoodOrMisc = selectedCategory.toLowerCase() === 'foods' || selectedCategory.toLowerCase() === 'miscellaneous';
+  const allergySrMap = React.useMemo(() => {
+    const grouped = {};
+    allergies.forEach(item => {
+      const cat = (item.category || '').toLowerCase();
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(item);
+    });
 
-  const displayedAllergies = allergies.filter(
-    allergy => allergy.category.toLowerCase() === selectedCategory.toLowerCase()
-  );
+    const srMap = {};
+    let currentSr = 1;
+
+    const categories = [
+      'pollens',
+      'fungi',
+      'mites',
+      'dusts',
+      'insects',
+      'dander/epithelia',
+    ];
+
+    categories.forEach(cat => {
+      if (grouped[cat]) {
+        grouped[cat].forEach(item => {
+          srMap[item._id] = currentSr++;
+        });
+      }
+    });
+
+    // Foods split
+    const foods = grouped['foods'] || [];
+    const vegFoods = foods.filter(a => getFoodType(a) === 'Veg');
+    const jainFoods = foods.filter(a => getFoodType(a) === 'Non Jain');
+    const nonVegFoods = foods.filter(a => getFoodType(a) === 'Non-Veg');
+
+    vegFoods.forEach(item => { srMap[item._id] = currentSr++; });
+    jainFoods.forEach(item => { srMap[item._id] = currentSr++; });
+    nonVegFoods.forEach(item => { srMap[item._id] = currentSr++; });
+
+    // Miscellaneous
+    const misc = grouped['miscellaneous'] || [];
+    misc.forEach(item => { srMap[item._id] = currentSr++; });
+
+    return srMap;
+  }, [allergies]);
+
+  const isFoodOrMisc = ['foods', 'non jain', 'non-veg', 'miscellaneous'].includes(selectedCategory.toLowerCase());
+
+  const displayedAllergies = allergies.filter(allergy => {
+    const allergyCategory = (allergy.category || '').toLowerCase();
+    const selCat = selectedCategory.toLowerCase();
+
+    if (['foods', 'non jain', 'non-veg'].includes(selCat)) {
+      if (allergyCategory !== 'foods') return false;
+      const foodType = getFoodType(allergy);
+      if (selCat === 'foods') return foodType === 'Veg';
+      if (selCat === 'non jain') return foodType === 'Non Jain';
+      if (selCat === 'non-veg') return foodType === 'Non-Veg';
+      return false;
+    }
+
+    return allergyCategory === selCat;
+  });
 
   const handleSave = async (language) => {
     let allInstructions = [];
@@ -177,13 +326,49 @@ const AddInstruction = () => {
     navigate(`/display-instruction/${patientId}`);
   };
 
+  const allInstructionKeys = displayedAllergies.flatMap(allergy => {
+    if (isFoodOrMisc) {
+      return [`${allergy._id}-0`];
+    } else if (Array.isArray(allergy.instructions)) {
+      return allergy.instructions
+        .map((inst, instIdx) => {
+          const text = inst && inst[selectedLanguage] ? inst[selectedLanguage] : (typeof inst === 'string' ? inst : inst?.english);
+          return text && typeof text === 'string' && text.trim() !== '' ? `${allergy._id}-${instIdx}` : null;
+        })
+        .filter(key => key !== null);
+    }
+    return [];
+  });
+  const allInstructionsSelected = allInstructionKeys.length > 0 && allInstructionKeys.every(key => selectedInstructions.includes(key));
+
+  const handleSelectAllInstructions = () => {
+    if (allInstructionsSelected) {
+      setSelectedInstructions(prev => prev.filter(key => !allInstructionKeys.includes(key)));
+    } else {
+      setSelectedInstructions(prev => Array.from(new Set([...prev, ...allInstructionKeys])));
+    }
+  };
+
+  const allImageIds = displayedAllergies
+    .filter(a => a.image && a.image.data && a.image.data !== '')
+    .map(a => a._id);
+  const allImagesSelected = allImageIds.length > 0 && allImageIds.every(id => selectedImages.includes(id));
+
+  const handleSelectAllImages = () => {
+    if (allImagesSelected) {
+      setSelectedImages(prev => prev.filter(id => !allImageIds.includes(id)));
+    } else {
+      setSelectedImages(prev => Array.from(new Set([...prev, ...allImageIds])));
+    }
+  };
+
   return (
-    <div className="container-fluid" style={{ padding: 0, minHeight: '100vh', background: '#f7f8fa' }}>
+    <div className="container-fluid" style={{ padding: 0, height: '100vh', display: 'flex', flexDirection: 'column', background: '#f7f8fa', overflow: 'hidden' }}>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
-      <div className="row" style={{ minHeight: '100vh' }}>
+      <div className="row flex-grow-1" style={{ margin: 0, height: '100%', overflow: 'hidden' }}>
         {/* Sidebar: Categories */}
-        <div className="col-md-2 bg-white shadow-sm" style={{ padding: 0, borderRight: '1px solid #eee', minHeight: '100vh' }}>
-          <div className="p-3">
+        <div className="col-md-2 bg-white shadow-sm" style={{ padding: 0, borderRight: '1px solid #eee', display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div className="p-3 custom-scrollbar" style={{ flex: 1, overflowY: 'auto' }}>
             <h5 className="fw-bold mb-3" style={{ fontSize: 18 }}>Categories</h5>
             <div className="d-flex flex-column gap-2">
               {allergenCategories.map((cat) => (
@@ -200,8 +385,8 @@ const AddInstruction = () => {
           </div>
         </div>
         {/* Main Panel: Allergies and Instructions */}
-        <div className="col-md-7" style={{ padding: '20px 20px 0px 32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+        <div className="col-md-7 d-flex flex-column" style={{ padding: '20px 20px 0px 32px', height: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 15 }}>
             <span
               className="fa fa-arrow-left me-3"
               style={{ fontSize: 20, color: '#0f4c75', cursor: 'pointer', marginRight: 16 }}
@@ -210,26 +395,6 @@ const AddInstruction = () => {
             <span style={{ fontWeight: 600, fontSize: 18, color: '#0f4c75', marginRight: 18 }}>Add Instructions</span>
             <span style={{ background: '#e3f0ff', color: '#1761a0', borderRadius: 8, padding: '4px 14px', fontWeight: 600, fontSize: 15 }}>
               Patient ID: {patientId}
-            </span>
-          </div>
-          <div style={{
-            background: '#e6f9ec',
-            color: '#218838',
-            borderRadius: 8,
-            padding: '12px 18px',
-            marginBottom: 18,
-            fontWeight: 500,
-            fontSize: 16,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            border: '1px solid #b7e4c7',
-            boxShadow: '0 1px 4px rgba(33,136,56,0.04)'
-          }}>
-            <i className="fa fa-info-circle" style={{ fontSize: 20, marginRight: 8 }}></i>
-            <span>
-              <span style={{ fontWeight: 600, marginRight: 8}}>Instructions:</span>
-              Select a category from the left, choose allergies and their instructions, and select images to include in the report. Use the language dropdown to set the PDF language. When done, click <b>Save Instructions</b> below.
             </span>
           </div>
           <div className="mb-3">
@@ -259,16 +424,23 @@ const AddInstruction = () => {
             <div className="alert alert-info" style={{ margin: '24px 0' }}>No allergies found for this category.</div>
           ) : (
             <Fragment>
-              <div className="mb-4">
-                <h5 className="fw-bold mb-3" style={{ color: '#0f4c75' }}>{selectedCategory} Allergies</h5>
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="fw-bold mb-0" style={{ color: '#0f4c75' }}>{selectedCategory} Allergies</h5>
+                {displayedAllergies.length > 0 && (
+                  <button className="btn btn-sm btn-outline-primary" onClick={handleSelectAllInstructions}>
+                    {allInstructionsSelected ? 'Deselect All' : 'Select All'}
+                  </button>
+                )}
+              </div>
+              <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 10, paddingBottom: 20, minHeight: 0 }}>
                 <div className="d-flex flex-column gap-3">
                   {displayedAllergies.map((allergy, idx) => {
-                    const allergyIndex = allergies.findIndex(a => a._id === allergy._id);
+                    const allergySr = allergySrMap[allergy._id] || (idx + 1);
                     return (
                       <div key={allergy._id} className="card shadow-sm" style={{ borderRadius: 12, padding: 0, border: '1px solid #e3e3e3' }}>
                         <div className="card-body" style={{ padding: 20 }}>
                           <h6 className="fw-bold mb-2" style={{ color: '#222' }}>
-                            {allergyIndex + 1}. {allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}
+                            {allergySr}. {allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}
                           </h6>
                           {isFoodOrMisc ? (
                             <div className="d-flex align-items-center">
@@ -284,24 +456,28 @@ const AddInstruction = () => {
                           ) : (
                             Array.isArray(allergy.instructions) && allergy.instructions.length > 0 ? (
                               <ul className="list-group list-group-flush mb-0" style={{ border: 'none' }}>
-                                {allergy.instructions.map((inst, idx) => (
-                                  <li
-                                    className="px-2 py-1 d-flex align-items-center"
-                                    key={idx}
-                                    style={{ fontSize: 13, border: 'none', background: 'none' }}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      className="me-2"
-                                      style={{ width: 22, height: 22 }}
-                                      checked={selectedInstructions.includes(`${allergy._id}-${idx}`)}
-                                      onChange={() => handleInstructionCheckbox(allergy._id, idx)}
-                                    />
-                                    <span>
-                                      <strong>{`${allergyIndex + 1}${String.fromCharCode(65 + idx)}`}</strong>: {inst && inst[selectedLanguage] ? inst[selectedLanguage] : (typeof inst === 'string' ? inst : inst.english)}
-                                    </span>
-                                  </li>
-                                ))}
+                                {allergy.instructions.map((inst, instIdx) => {
+                                  const text = inst && inst[selectedLanguage] ? inst[selectedLanguage] : (typeof inst === 'string' ? inst : inst?.english);
+                                  if (!text || typeof text !== 'string' || text.trim() === '') return null;
+                                  return (
+                                    <li
+                                      className="px-2 py-1 d-flex align-items-center"
+                                      key={instIdx}
+                                      style={{ fontSize: 13, border: 'none', background: 'none' }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        className="me-2"
+                                        style={{ width: 22, height: 22 }}
+                                        checked={selectedInstructions.includes(`${allergy._id}-${instIdx}`)}
+                                        onChange={() => handleInstructionCheckbox(allergy._id, instIdx)}
+                                      />
+                                      <span>
+                                        <strong>{`${allergySr}${String.fromCharCode(65 + instIdx)}`}</strong>: {text}
+                                      </span>
+                                    </li>
+                                  );
+                                })}
                               </ul>
                             ) : (
                               <span className="text-muted">No instructions available</span>
@@ -317,8 +493,15 @@ const AddInstruction = () => {
           )}
         </div>
         {/* Right Panel: Images */}
-        <div className="col-md-3 bg-white shadow-sm" style={{ padding: '32px 16px', borderLeft: '1px solid #eee', minHeight: '100vh' }}>
-          <h5 className="fw-bold mb-3" style={{ color: '#0f4c75' }}>Select Images</h5>
+        <div className="col-md-3 bg-white shadow-sm d-flex flex-column" style={{ padding: '32px 16px 0px 16px', borderLeft: '1px solid #eee', height: '100%' }}>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h5 className="fw-bold mb-0" style={{ color: '#0f4c75' }}>Select Images</h5>
+            {displayedAllergies.length > 0 && !loading && !error && (
+              <button className="btn btn-sm btn-outline-primary" onClick={handleSelectAllImages}>
+                {allImagesSelected ? 'Deselect All' : 'Select All'}
+              </button>
+            )}
+          </div>
           {loading ? (
             <div className="text-center my-5">
               <div className="spinner-border text-primary" role="status">
@@ -330,17 +513,20 @@ const AddInstruction = () => {
           ) : displayedAllergies.length === 0 ? (
             <div className="alert alert-info" style={{ margin: '24px 0' }}>No images found for this category.</div>
           ) : (
-            <div className="d-flex flex-column gap-3">
-              {displayedAllergies.map((allergy) => (
+            <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 5, paddingBottom: 20, minHeight: 0 }}>
+              <div className="d-flex flex-column gap-3">
+                {displayedAllergies.map((allergy) => (
                 <div key={allergy._id} className="card p-2 mb-2" style={{ borderRadius: 10, border: '1px solid #e3e3e3' }}>
                   <div className="d-flex align-items-center mb-2">
-                    <input
-                      type="checkbox"
-                      className="me-2"
-                      style={{ width: 22, height: 22 }}
-                      checked={selectedImages.includes(allergy._id)}
-                      onChange={() => handleImageCheckbox(allergy._id)}
-                    />
+                    {allergy.image && allergy.image.data && allergy.image.data !== '' && (
+                      <input
+                        type="checkbox"
+                        className="me-2"
+                        style={{ width: 22, height: 22 }}
+                        checked={selectedImages.includes(allergy._id)}
+                        onChange={() => handleImageCheckbox(allergy._id)}
+                      />
+                    )}
                     <span style={{ fontSize: 13 }}>{allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}</span>
                   </div>
                   {allergy.image && allergy.image.data && allergy.image.data !== '' ? (
@@ -368,12 +554,13 @@ const AddInstruction = () => {
                   )}
                 </div>
               ))}
+              </div>
             </div>
           )}
         </div>
       </div>
       {/* Sticky Save Bar */}
-      <div className="sticky-bottom-bar" style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '16px 0', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'flex-end', gap: 12, zIndex: 10 }}>
+      <div className="sticky-bottom-bar bg-white shadow-lg" style={{ padding: '16px 32px', borderTop: '1px solid #eee', display: 'flex', justifyContent: 'flex-end', gap: 12, zIndex: 10 }}>
         <button className="btn btn-secondary" onClick={() => navigate(-1)}>Cancel</button>
         <button className="btn btn-primary" onClick={() => handleSave(selectedLanguage)}>Save Instructions</button>
       </div>

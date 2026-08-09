@@ -22,4 +22,15 @@ export async function addModeOfIntake(newMode) {
         throw new Error(err.error || 'Failed to add mode of intake');
     }
     return response.json();
-} 
+}
+
+export async function deleteModeOfIntake(mode) {
+    const response = await apiFetch(`${API_BASE_URL}/mode-of-intake/${encodeURIComponent(mode)}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Failed to delete mode of intake');
+    }
+    return response.json();
+}

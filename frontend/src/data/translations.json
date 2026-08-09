@@ -1630,7 +1630,17 @@
     "Ageratum Conyzoides": {
       "hindi": "Ageratum Conyzoides",
       "gujarati": "Ageratum Conyzoides",
-      "marathi": "Ageratum Conyzoides"
+      "marathi": "घाणेरी"
+    },
+    "Ageratum conyzoides": {
+      "hindi": "Ageratum Conyzoides",
+      "gujarati": "Ageratum Conyzoides",
+      "marathi": "घाणेरी"
+    },
+    "ageratum conyzoides": {
+      "hindi": "Ageratum Conyzoides",
+      "gujarati": "Ageratum Conyzoides",
+      "marathi": "घाणेरी"
     },
     "Carica Papaya": {
       "hindi": "कैरीका पपीता",
@@ -1651,6 +1661,11 @@
       "hindi": "शाकाहारी",
       "gujarati": "શાકાહારી",
       "marathi": "शाकाहारी"
+    },
+    "Samanea  Saman": {
+      "hindi": "समाने समाना",
+      "gujarati": "સામને સામન",
+      "marathi": "समाना समन"
     }
   }
 }

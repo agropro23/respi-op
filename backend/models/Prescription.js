@@ -24,7 +24,8 @@ const medicineSchema = new mongoose.Schema({
         afterFood: { type: Boolean, default: false, required: false },
         withFood: { type: Boolean, default: false, required: false },
         other: { type: String, required: false }
-    }
+    },
+    isBelow: { type: Boolean, default: false }
 });
 
 const prescriptionSchema = new mongoose.Schema({
@@ -54,7 +55,11 @@ const prescriptionSchema = new mongoose.Schema({
     },
     medicines: [medicineSchema],
     additionalNotes: String,
-    doctorRemarks: String
+    doctorRemarks: String,
+    commonBelowInstruction: String,
+    selectedDoctor: { type: String, default: 'DR. VIPUL SHAH' },
+    paperSize: { type: String, default: 'A4' },
+    useOwnLetterhead: { type: Boolean, default: false }
 }, { timestamps: true });
 
 // Add index for efficient queries

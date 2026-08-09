@@ -29,7 +29,11 @@ router.post('/', async (req, res) => {
       followUp,
       medicines,
       additionalNotes,
-      doctorRemarks
+      doctorRemarks,
+      commonBelowInstruction,
+      selectedDoctor,
+      paperSize,
+      useOwnLetterhead
     } = req.body;
 
     if (!patientId || !patientName || !medicines || !medicines.length) {
@@ -46,7 +50,11 @@ router.post('/', async (req, res) => {
       followUp,
       medicines,
       additionalNotes,
-      doctorRemarks
+      doctorRemarks,
+      commonBelowInstruction,
+      selectedDoctor,
+      paperSize,
+      useOwnLetterhead
     });
 
     const savedPrescription = await prescription.save();
@@ -94,7 +102,11 @@ router.patch('/:id', async (req, res) => {
             followUp,
             medicines,
             additionalNotes,
-            doctorRemarks
+            doctorRemarks,
+            commonBelowInstruction,
+            selectedDoctor,
+            paperSize,
+            useOwnLetterhead
         } = req.body;
 
         // Validate required fields
@@ -114,7 +126,11 @@ router.patch('/:id', async (req, res) => {
                 followUp,
                 medicines,
                 additionalNotes,
-                doctorRemarks
+                doctorRemarks,
+                commonBelowInstruction,
+                selectedDoctor,
+                paperSize,
+                useOwnLetterhead
             },
             { new: true, runValidators: true }
         );
@@ -172,6 +188,41 @@ router.post('/mode-of-intake', (req, res) => {
         return res.status(500).json({ error: 'Failed to save mode of intake', details: writeErr.message });
       }
       res.status(201).json({ success: true, mode: mode.trim() });
+    });
+  });
+});
+
+// Delete a mode of intake
+router.delete('/mode-of-intake/:mode', (req, res) => {
+  const modeToDelete = req.params.mode;
+  if (!modeToDelete || typeof modeToDelete !== 'string' || !modeToDelete.trim()) {
+    return res.status(400).json({ error: 'Mode is required' });
+  }
+
+  fs.readFile(modeOfIntakePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to read mode of intake', details: err.message });
+    }
+    
+    let modes = [];
+    try {
+      modes = JSON.parse(data || '[]');
+    } catch (parseErr) {
+      return res.status(500).json({ error: 'Failed to parse mode of intake', details: parseErr.message });
+    }
+
+    const modeIndex = modes.indexOf(modeToDelete.trim());
+    if (modeIndex === -1) {
+      return res.status(404).json({ error: 'Mode not found' });
+    }
+
+    modes.splice(modeIndex, 1);
+
+    fs.writeFile(modeOfIntakePath, JSON.stringify(modes, null, 2), 'utf8', (writeErr) => {
+      if (writeErr) {
+        return res.status(500).json({ error: 'Failed to delete mode of intake', details: writeErr.message });
+      }
+      res.status(200).json({ success: true, message: 'Mode deleted successfully' });
     });
   });
 });

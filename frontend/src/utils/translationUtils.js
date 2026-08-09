@@ -8,7 +8,16 @@ export const getTranslationFromCache = (text, language) => {
   if (!text || !language) return null;
   
   const normalizedText = text.trim();
-  const allergenTranslations = translations.allergens[normalizedText];
+  let allergenTranslations = translations.allergens[normalizedText];
+
+  if (!allergenTranslations) {
+    const foundKey = Object.keys(translations.allergens || {}).find(
+      k => k.toLowerCase() === normalizedText.toLowerCase()
+    );
+    if (foundKey) {
+      allergenTranslations = translations.allergens[foundKey];
+    }
+  }
   
   if (allergenTranslations && allergenTranslations[language]) {
     console.log('Found translation in cache:', normalizedText, language);

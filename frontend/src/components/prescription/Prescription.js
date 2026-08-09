@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2 } from 'lucide-react';
-import { getModesOfIntake, addModeOfIntake } from '../../utils/modeOfIntakeApi';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { getModesOfIntake, addModeOfIntake, deleteModeOfIntake } from '../../utils/modeOfIntakeApi';
 import { translateText, localizeDigits } from '../../utils/translationUtils';
 import Modal from 'react-modal';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -43,7 +43,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
             afterFood: false,
             withFood: false,
             other: ''
-        }
+        },
+        isBelow: false
     });
     const [modeOfIntakeOptions, setModeOfIntakeOptions] = useState([]);
     const [newModeOfIntake, setNewModeOfIntake] = useState('');
@@ -55,6 +56,20 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
     const { patientId } = useParams();
     const [paperSize, setPaperSize] = useState('A4');
     const [useOwnLetterhead, setUseOwnLetterhead] = useState(false);
+    
+    // Custom dropdown state
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         let timeoutId;
@@ -98,7 +113,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
         medicines: [],
         additionalNotes: prescriptionToEdit?.additionalNotes || '',
         doctorRemarks: prescriptionToEdit?.doctorRemarks || '',
-        selectedDoctor: 'DR. VIPUL SHAH'
+        selectedDoctor: 'DR. VIPUL SHAH',
+        commonBelowInstruction: prescriptionToEdit?.commonBelowInstruction || ''
     });
     // Fetch medicines from API
     useEffect(() => {
@@ -191,10 +207,10 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
             return;
         }
 
-        // Check if at least one timing is selected
+        // Check if at least one timing is selected or custom timing provided
         const hasSelectedTiming = Object.values(selectedMedicine.timings).some(timing => timing);
-        if (!hasSelectedTiming) {
-            setError('Please select at least one timing');
+        if (!hasSelectedTiming && !selectedMedicine.instructions.other.trim()) {
+            setError('Please select at least one timing or provide medicine instruction');
             return;
         }
 
@@ -208,7 +224,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                 dosage: selectedMedicine.dosage,
                 duration: selectedMedicine.duration,
                 timings: selectedMedicine.timings,
-                instructions: selectedMedicine.instructions
+                instructions: selectedMedicine.instructions,
+                isBelow: selectedMedicine.isBelow
             }]
         }));
 
@@ -228,7 +245,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                 afterFood: false,
                 withFood: false,
                 other: ''
-            }
+            },
+            isBelow: false
         });
     };
     const handleRemoveMedicine = (index) => {
@@ -236,6 +254,25 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
             ...prev,
             selectedMedicines: prev.selectedMedicines.filter((_, i) => i !== index)
         }));
+    };
+
+    const handleDeleteModeOfIntake = async (modeToDelete, e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!window.confirm(`Are you sure you want to delete "${modeToDelete}"?`)) return;
+        
+        try {
+            await deleteModeOfIntake(modeToDelete);
+            setModeOfIntakeOptions(prev => prev.filter(m => m !== modeToDelete));
+            if (selectedMedicine.dosage === modeToDelete) {
+                setSelectedMedicine(prev => ({ ...prev, dosage: '' }));
+            }
+            setSuccessMessage(`Mode of intake "${modeToDelete}" deleted successfully`);
+        } catch (err) {
+            setError(err.message || 'Failed to delete mode of intake');
+        }
     };
 
     // Update prescribingTo if initialPatient changes
@@ -300,8 +337,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                 if (!medicine.duration) {
                     throw new Error(`Please specify duration for ${medicine.name}`);
                 }
-                if (!Object.values(medicine.timings).some(timing => timing)) {
-                    throw new Error(`Please select at least one timing for ${medicine.name}`);
+                if (!Object.values(medicine.timings).some(timing => timing) && (!medicine.instructions || !medicine.instructions.other || !medicine.instructions.other.trim())) {
+                    throw new Error(`Please select at least one timing or provide medicine instruction for ${medicine.name}`);
                 }
             });
             // Format the data according to the schema
@@ -328,12 +365,16 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                         afterFood: med.instructions.afterFood || false,
                         withFood: med.instructions.withFood || false,
                         other: med.instructions.other || ''
-                    }
+                    },
+                    isBelow: med.isBelow || false
                 })),
                 additionalNotes: prescriptionForm.additionalNotes || '',
                 doctorRemarks: prescriptionForm.doctorRemarks || '',
+                commonBelowInstruction: prescriptionForm.commonBelowInstruction || '',
                 printLanguage,
-                selectedDoctor: prescriptionForm.selectedDoctor
+                selectedDoctor: prescriptionForm.selectedDoctor,
+                paperSize,
+                useOwnLetterhead
             };
 
             // Validate required fields
@@ -391,6 +432,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
     // Sync form state with prescriptionToEdit and initialPatient
     useEffect(() => {
         if (prescriptionToEdit) {
+            setPaperSize(prescriptionToEdit.paperSize || 'A4');
+            setUseOwnLetterhead(prescriptionToEdit.useOwnLetterhead !== undefined ? prescriptionToEdit.useOwnLetterhead : false);
             setPrescriptionForm({
                 patientId: initialPatient?._id || '',
                 patientName: initialPatient?.basicInfo?.name || '',
@@ -405,7 +448,8 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                 medicines: [],
                 additionalNotes: prescriptionToEdit.additionalNotes || '',
                 doctorRemarks: prescriptionToEdit.doctorRemarks || '',
-                selectedDoctor: prescriptionToEdit.selectedDoctor || 'DR. VIPUL SHAH'
+                selectedDoctor: prescriptionToEdit.selectedDoctor || 'DR. VIPUL SHAH',
+                commonBelowInstruction: prescriptionToEdit.commonBelowInstruction || ''
             });
         }
     }, [prescriptionToEdit, initialPatient]);
@@ -421,7 +465,11 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
     };
 
     // Helper to get timing labels in selected language
-    const getTimingLabelsTranslated = async (timings, lang) => {
+    const getTimingLabelsTranslated = async (med, lang) => {
+        if (med.instructions && med.instructions.other && med.instructions.other.trim()) {
+            return lang === 'en' ? med.instructions.other : await translateText(med.instructions.other, lang);
+        }
+        const timings = med.timings;
         const labels = [];
         if (timings.morning) labels.push(lang === 'en' ? 'Morning' : await translateText('Morning', lang));
         if (timings.afternoon) labels.push(lang === 'en' ? 'Afternoon' : await translateText('Afternoon', lang));
@@ -448,9 +496,9 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                     // Always set timingLabels for English
                     let timingLabels;
                     if (printLanguage === 'english') {
-                        timingLabels = getTimingLabels(med.timings);
+                        timingLabels = getTimingLabels(med);
                     } else {
-                        timingLabels = await getTimingLabelsTranslated(med.timings, langCode);
+                        timingLabels = await getTimingLabelsTranslated(med, langCode);
                     }
                     // Instructions: translate each instruction if not empty
                     const instructions = { ...med.instructions };
@@ -478,7 +526,11 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
     }, [prescriptionForm.selectedMedicines, printLanguage]);
 
     // Fallback getTimingLabels for English
-    const getTimingLabels = (timings) => {
+    const getTimingLabels = (med) => {
+        if (med.instructions && med.instructions.other && med.instructions.other.trim()) {
+            return med.instructions.other;
+        }
+        const timings = med.timings;
         const labels = [];
         if (timings.morning) labels.push('Morning');
         if (timings.afternoon) labels.push('Afternoon');
@@ -765,7 +817,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                     ) : (
                                                         (printLanguage === 'english' ? prescriptionForm.selectedMedicines : translatedMedicineDisplay).map((medicine, index) => {
                                                             const timingLabels = printLanguage === 'english'
-                                                                ? getTimingLabels(medicine.timings)
+                                                                ? getTimingLabels(medicine)
                                                                 : medicine.timingLabels;
                                                             // Localize dosage for display
                                                             const displayDosage = printLanguage === 'english' ? medicine.dosage : localizeDigits(medicine.dosage, printLanguage);
@@ -800,6 +852,31 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                 </div>
                                             )}
                                         </div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <h6 style={{
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            color: '#475569',
+                                            marginBottom: '16px',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em'
+                                        }}>Common Instruction</h6>
+                                        <textarea
+                                            className="form-control"
+                                            rows="2"
+                                            value={prescriptionForm.commonBelowInstruction}
+                                            onChange={(e) => handleInputChange('commonBelowInstruction', e.target.value)}
+                                            placeholder="Enter Common Instructions"
+                                            style={{
+                                                borderRadius: '6px',
+                                                border: '1px solid #cbd5e1',
+                                                padding: '10px 14px',
+                                                fontSize: '14px',
+                                                backgroundColor: '#ffffff',
+                                                color: '#1e293b'
+                                            }}
+                                        />
                                     </div>
                                     <div className="mt-4">
                                         <h6 style={{
@@ -1037,19 +1114,94 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                         </div>
                                     </div>
                                     {/* Mode of Intake Dropdown (replaces Dosage) */}
-                                    <div className="mb-4">
+                                    <div className="mb-4" ref={dropdownRef}>
                                         <label className="form-label" style={{ fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '8px' }}>Mode of Intake</label>
-                                        <select
-                                            className="form-select"
-                                            value={selectedMedicine.dosage}
-                                            onChange={(e) => handleMedicineChange('dosage', e.target.value)}
-                                            style={{ borderRadius: '6px', border: '1px solid #cbd5e1', padding: '10px 14px', fontSize: '14px', backgroundColor: '#ffffff', boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)', color: '#1e293b' }}
-                                        >
-                                            <option value="">Select Mode of Intake</option>
-                                            {modeOfIntakeOptions.map((mode, idx) => (
-                                                <option key={idx} value={mode}>{mode}</option>
-                                            ))}
-                                        </select>
+                                        <div style={{ position: 'relative' }}>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                                style={{ 
+                                                    width: '100%', 
+                                                    display: 'flex', 
+                                                    justifyContent: 'space-between', 
+                                                    alignItems: 'center',
+                                                    borderRadius: '6px', 
+                                                    border: '1px solid #cbd5e1', 
+                                                    padding: '10px 14px', 
+                                                    fontSize: '14px', 
+                                                    backgroundColor: '#ffffff', 
+                                                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)', 
+                                                    color: '#1e293b',
+                                                    textAlign: 'left',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <span>{selectedMedicine.dosage || "Select Mode of Intake"}</span>
+                                                <ChevronDown size={16} color="#64748b" />
+                                            </button>
+                                            
+                                            {isDropdownOpen && (
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '100%',
+                                                    left: 0,
+                                                    right: 0,
+                                                    marginTop: '4px',
+                                                    backgroundColor: '#fff',
+                                                    border: '1px solid #e2e8f0',
+                                                    borderRadius: '6px',
+                                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                                                    zIndex: 50,
+                                                    maxHeight: '250px',
+                                                    overflowY: 'auto'
+                                                }}>
+                                                    <div 
+                                                        style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #f1f5f9', color: '#64748b', fontSize: '14px' }}
+                                                        onClick={() => { handleMedicineChange('dosage', ''); setIsDropdownOpen(false); }}
+                                                    >
+                                                        Select Mode of Intake
+                                                    </div>
+                                                    {modeOfIntakeOptions.map((mode, idx) => (
+                                                        <div key={idx} style={{ 
+                                                            display: 'flex', 
+                                                            justifyContent: 'space-between', 
+                                                            alignItems: 'center', 
+                                                            padding: '6px 12px',
+                                                            cursor: 'pointer',
+                                                            borderBottom: idx === modeOfIntakeOptions.length - 1 ? 'none' : '1px solid #f1f5f9',
+                                                            fontSize: '14px'
+                                                        }}>
+                                                            <div 
+                                                                style={{ flex: 1, padding: '4px 0', color: '#334155' }}
+                                                                onClick={() => { handleMedicineChange('dosage', mode); setIsDropdownOpen(false); }}
+                                                            >
+                                                                {mode}
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={(e) => handleDeleteModeOfIntake(mode, e)}
+                                                                style={{
+                                                                    background: 'none',
+                                                                    border: 'none',
+                                                                    color: '#ef4444',
+                                                                    cursor: 'pointer',
+                                                                    padding: '4px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    borderRadius: '4px'
+                                                                }}
+                                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fee2e2'}
+                                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                                title="Delete Mode of Intake"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">Duration (Days)</label>
@@ -1074,6 +1226,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                         className="form-check-input"
                                                         id={`timing-${timing}`}
                                                         checked={selectedMedicine.timings[timing]}
+                                                        disabled={!selectedMedicine.isBelow && !!selectedMedicine.instructions.other.trim()}
                                                         onChange={(e) => handleMedicineChange('timings', {
                                                             ...selectedMedicine.timings,
                                                             [timing]: e.target.checked
@@ -1091,6 +1244,33 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                     </label>
                                                 </div>
                                             ))}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            className="form-control mt-3"
+                                            placeholder="Medicine instruction"
+                                            value={selectedMedicine.instructions.other}
+                                            disabled={!selectedMedicine.isBelow && Object.values(selectedMedicine.timings).some(t => t)}
+                                            onChange={(e) => handleMedicineChange('instructions', {
+                                                ...selectedMedicine.instructions,
+                                                other: e.target.value
+                                            })}
+                                            style={{
+                                                fontSize: '14px',
+                                                padding: '8px 12px'
+                                            }}
+                                        />
+                                        <div className="form-check mt-2">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="instruction-below"
+                                                checked={selectedMedicine.isBelow}
+                                                onChange={(e) => handleMedicineChange('isBelow', e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="instruction-below" style={{ fontSize: '14px', color: '#475569' }}>
+                                                Keep instruction below
+                                            </label>
                                         </div>
                                     </div>
 
@@ -1124,20 +1304,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                     </div>
                                                 ))}
                                         </div>
-                                        <input
-                                            type="text"
-                                            className="form-control mt-2"
-                                            placeholder="Other instructions"
-                                            value={selectedMedicine.instructions.other}
-                                            onChange={(e) => handleMedicineChange('instructions', {
-                                                ...selectedMedicine.instructions,
-                                                other: e.target.value
-                                            })}
-                                            style={{
-                                                fontSize: '14px',
-                                                padding: '8px 12px'
-                                            }}
-                                        />
+
                                     </div>
 
                                     <button

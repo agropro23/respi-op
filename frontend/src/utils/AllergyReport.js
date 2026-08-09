@@ -318,14 +318,14 @@ const isFallbackLang = (allergen, lang) => {
 
 // Add category translation mapping at the top:
 const CATEGORY_TRANSLATIONS = {
-  pollens: { hindi: 'परागराज', gujarati: 'પરાગરજ' },
-  fungi: { hindi: 'फफूंदी', gujarati: 'ફૂગ' },
-  mites: { hindi: 'सूक्ष्म जन्तु', gujarati: 'સૂક્ષ્મ જંતુ' },
-  dusts: { hindi: 'धूल', gujarati: 'ધૂળ\રજ' },
-  insects: { hindi: 'कीड़े', gujarati: 'કીટકો' },
-  'dander/epithelia': { hindi: 'रोम/त्वचा', gujarati: 'વાળ/ચામડી' },
-  foods: { hindi: 'ख़ुराक', gujarati: 'ખોરાક (EXET PROTEIN)' },
-  miscellaneous: { hindi: 'विविध', gujarati: 'વિવિધ' },
+  pollens: { hindi: 'परागराज', gujarati: 'પરાગરજ', marathi: 'परागकण' },
+  fungi: { hindi: 'फफूंदी', gujarati: 'ફૂગ', marathi: 'बुरशी' },
+  mites: { hindi: 'सूक्ष्म जन्तु', gujarati: 'સૂક્ષ્મ જંતુ', marathi: 'सूक्ष्मजंतू' },
+  dusts: { hindi: 'धूल', gujarati: 'ધૂળ\રજ', marathi: 'धूळ' },
+  insects: { hindi: 'कीड़े', gujarati: 'કીટકો', marathi: 'कीटक' },
+  'dander/epithelia': { hindi: 'रोम/त्वचा', gujarati: 'વાળ/ચામડી', marathi: 'केस/त्वचा' },
+  foods: { hindi: 'ख़ुराक', gujarati: 'ખોરાક (EXET PROTEIN)', marathi: 'अन्न' },
+  miscellaneous: { hindi: 'विविध', gujarati: 'વિવિધ', marathi: 'विविध' },
 };
 
 // Utility style for unbreakable rows
@@ -333,6 +333,40 @@ const unbreakableRow = { breakInside: 'avoid' };
 
 // Helper to strip zero-width characters that cause fontkit GPOS crash in @react-pdf/renderer
 const cleanText = (str) => (typeof str === 'string' ? str.replace(/[\u200B-\u200D\uFEFF\u200E\u200F]/g, '') : (str || ''));
+
+const getFoodType = (allergen) => {
+  if (!allergen) return 'Veg';
+  if (allergen.foodCategory) {
+    switch (allergen.foodCategory.toLowerCase()) {
+      case 'veg': return 'Veg';
+      case 'jain': return 'Non Jain';
+      case 'non-veg': return 'Non-Veg';
+    }
+  }
+  if (!allergen.name?.english) return 'Veg';
+  const foodName = allergen.name.english.toLowerCase();
+  const nonVegFoods = [
+    'chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'crab', 'lobster',
+    'oyster', 'clam', 'mussel', 'scallop', 'squid', 'octopus', 'duck',
+    'turkey', 'goose', 'quail', 'pheasant', 'venison', 'rabbit', 'goat',
+    'mutton', 'bacon', 'ham', 'sausage', 'pepperoni', 'salami', 'anchovy',
+    'tuna', 'salmon', 'cod', 'halibut', 'mackerel', 'sardine', 'herring',
+    'trout', 'catfish', 'tilapia', 'swordfish', 'mahi mahi', 'grouper',
+    'red snapper', 'sea bass', 'egg', 'eggs', 'yolk', 'albumin',
+    'ovalbumin', 'ovomucoid', 'lysozyme'
+  ];
+  const jainFoods = [
+    'potato', 'onion', 'garlic', 'ginger', 'carrot', 'radish', 'turnip',
+    'beetroot', 'sweet potato', 'yam', 'taro', 'cassava', 'parsnip',
+    'rutabaga', 'celeriac', 'horseradish', 'wasabi', 'leek', 'shallot',
+    'chive', 'scallion', 'spring onion', 'asafoetida', 'hing', 'mushroom',
+    'truffle', 'morel', 'chanterelle', 'shiitake', 'oyster mushroom',
+    'portobello', 'cremini', 'enoki', 'maitake', 'reishi'
+  ];
+  if (nonVegFoods.some(food => foodName.includes(food))) return 'Non-Veg';
+  if (jainFoods.some(food => foodName.includes(food))) return 'Non Jain';
+  return 'Veg';
+};
 
 // Create Document Component
 const AllergyReport = (props) => {
@@ -361,9 +395,52 @@ const AllergyReport = (props) => {
 
   // Helper function to render a separate table per category (continuous Sr No maintained)
   const renderCategoryTables = () => {
-    let srNo = 1; // Single SR counter for all categories - ensures continuous numbering across Pollens, Fungi, Mites, Dusts, Insects, Dander/Epithelia, Foods (Veg, Jain, Non-Veg), and Miscellaneous
+    let srNo = 1;
     const tables = [];
-    const categories = Object.keys(data.allergens);
+    const regLang = (props.selectedRegionalLanguage || data.regionalLanguage || 'gujarati').toLowerCase();
+    const isMarathi = regLang === 'marathi';
+
+    const getRegionalName = (dbA, userVal) => {
+      const dbNameObj = (dbA && typeof dbA.name === 'object') ? dbA.name : {};
+      const dbMarathi = dbNameObj.marathi || dbA?.marathi;
+      const dbGujarati = dbNameObj.gujarati || dbA?.gujarati;
+      const dbHindi = dbNameObj.hindi || dbA?.hindi;
+
+      if (isMarathi) {
+        if (dbMarathi && dbMarathi.trim() !== '') return dbMarathi;
+        if (userVal?.marathi && userVal.marathi.trim() !== '') return userVal.marathi;
+        if (dbHindi && dbHindi.trim() !== '') return dbHindi;
+        if (userVal?.hindi && userVal.hindi.trim() !== '') return userVal.hindi;
+        return typeof dbA?.name === 'string' ? dbA.name : (dbA?.name?.english || userVal?.name || '');
+      } else {
+        if (dbGujarati && dbGujarati.trim() !== '') return dbGujarati;
+        if (userVal?.gujarati && userVal.gujarati.trim() !== '') return userVal.gujarati;
+        return typeof dbA?.name === 'string' ? dbA.name : (dbA?.name?.english || userVal?.name || '');
+      }
+    };
+
+    const getRegionalHeaderTitle = () => (isMarathi ? 'मराठी' : 'ગુજરાતી');
+    const getRegionalFontFamily = () => (isMarathi ? 'NotoSansDevanagari' : 'NotoSansGujarati');
+    const getRegionalTextStyle = () => (isMarathi ? styles.hindiText : styles.gujaratiText);
+    const standardCategoryOrder = [
+      'pollens',
+      'fungi',
+      'mites',
+      'dusts',
+      'insects',
+      'dander/epithelia',
+      'foods',
+      'miscellaneous'
+    ];
+
+    const categories = Object.keys(data.allergens || {}).sort((a, b) => {
+      const idxA = standardCategoryOrder.indexOf(a.toLowerCase());
+      const idxB = standardCategoryOrder.indexOf(b.toLowerCase());
+      const posA = idxA !== -1 ? idxA : 999;
+      const posB = idxB !== -1 ? idxB : 999;
+      return posA - posB;
+    });
+
     categories.forEach(category => {
       let dbAlls = Array.isArray(allAllergies) ? allAllergies.filter(a => (a.category || '').toLowerCase() === category.toLowerCase()) : [];
       if (dbAlls.length === 0 && Array.isArray(data.allergens[category]) && data.allergens[category].length > 0) {
@@ -395,15 +472,15 @@ const AllergyReport = (props) => {
         // Special handling for foods category
         if (lowerCat === 'foods') {
           // Add category header with translations (gray background)
-          const rawCatTrans = CATEGORY_TRANSLATIONS[lowerCat] || { hindi: '', gujarati: '' };
-          const catTrans = { hindi: cleanText(rawCatTrans.hindi), gujarati: cleanText(rawCatTrans.gujarati) };
+          const rawCatTrans = CATEGORY_TRANSLATIONS[lowerCat] || { hindi: '', gujarati: '', marathi: '' };
+          const catTrans = { hindi: cleanText(rawCatTrans.hindi), regional: cleanText(isMarathi ? rawCatTrans.marathi : rawCatTrans.gujarati) };
           catRows.push(
             <View key={category + '-cat'} style={styles.tableRow}>
               <View style={[styles.categoryHeader, { width: '100%' }]}>
                 <Text style={{ color: '#ff0000' }}>
                   <Text style={styles.timesNewRoman}>{category}</Text> / {' '}
                   <Text style={[styles.hindiText, { color: '#ff0000' }]}>{catTrans.hindi}</Text> / {' '}
-                  <Text style={[styles.gujaratiText, { color: '#ff0000' }]}>{catTrans.gujarati}</Text>
+                  <Text style={[getRegionalTextStyle(), { color: '#ff0000' }]}>{catTrans.regional}</Text>
                 </Text>
               </View>
             </View>
@@ -413,7 +490,7 @@ const AllergyReport = (props) => {
             <View style={[styles.tableColHeader, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Sr No.</Text></View>,
             <View style={[styles.tableColHeader, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Name (English)</Text></View>,
             <View style={[styles.tableColHeader, { width: '31%' }]} key="hindi"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansDevanagari' }]}>हिंदी</Text></View>,
-            <View style={[styles.tableColHeader, { width: '20%' }]} key="guj"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansGujarati' }]}>ગુજરાતી</Text></View>,
+            <View style={[styles.tableColHeader, { width: '20%' }]} key="regional"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: getRegionalFontFamily() }]}>{getRegionalHeaderTitle()}</Text></View>,
             <View style={[styles.tableColHeader, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Wheal Dia mm</Text></View>,
             <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]} key="erythema"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Erythema D+d 2mm</Text></View>,
           ];
@@ -426,10 +503,10 @@ const AllergyReport = (props) => {
             userMap[(u.name || '').trim().toLowerCase()] = u;
           });
 
-          // Split foods by foodCategory
-          const jainFoods = dbAlls.filter(a => a.foodCategory === 'veg');
-          const nonJainFoods = dbAlls.filter(a => a.foodCategory === 'jain');
-          const nonVegFoods = dbAlls.filter(a => a.foodCategory === 'non-veg');
+          // Split foods by foodCategory using getFoodType helper
+          const jainFoods = dbAlls.filter(a => getFoodType(a) === 'Veg');
+          const nonJainFoods = dbAlls.filter(a => getFoodType(a) === 'Non Jain');
+          const nonVegFoods = dbAlls.filter(a => getFoodType(a) === 'Non-Veg');
 
           // Jain foods (no heading) - continue SR numbering
           jainFoods.forEach((dbA) => {
@@ -439,7 +516,7 @@ const AllergyReport = (props) => {
               <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
               <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
               <View style={[styles.tableCol2, { width: '31%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-              <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+              <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
               <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
               <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
                 <Svg width="12" height="12" viewBox="0 0 24 24">
@@ -477,7 +554,7 @@ const AllergyReport = (props) => {
                   <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: 'NotoSansDevanagari' }}>हिंदी</Text>
                 </View>
                 <View style={[styles.tableColHeader, { width: '20%' }]}>
-                  <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: 'NotoSansGujarati' }}>ગુજરાતી</Text>
+                  <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: getRegionalFontFamily() }}>{getRegionalHeaderTitle()}</Text>
                 </View>
                 <View style={[styles.tableColHeader, { width: '6%' }]}></View>
                 <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]}></View>
@@ -490,7 +567,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '31%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
                   <Svg width="12" height="12" viewBox="0 0 24 24">
@@ -525,14 +602,14 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableColHeader, { width: '31%' }]}>
                   <Text style={{ color: '#ff0000', fontSize: 10 }}>
                     <Text>NON VEG FOOD \</Text>
-                    <Text style={[styles.gujaratiText]}> માંસાહારી</Text>
+                    <Text style={[getRegionalTextStyle()]}>{isMarathi ? ' मांसाहारी' : ' માંસાહારી'}</Text>
                   </Text>
                 </View>
                 <View style={[styles.tableColHeader, { width: '31%' }]}>
                   <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: 'NotoSansDevanagari' }}>हिंदी</Text>
                 </View>
                 <View style={[styles.tableColHeader, { width: '20%' }]}>
-                  <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: 'NotoSansGujarati' }}>ગુજરાતી</Text>
+                  <Text style={{ color: '#ff0000', fontSize: 10, fontFamily: getRegionalFontFamily() }}>{getRegionalHeaderTitle()}</Text>
                 </View>
                 <View style={[styles.tableColHeader, { width: '6%' }]}></View>
                 <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]}></View>
@@ -545,7 +622,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '31%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
                   <Svg width="12" height="12" viewBox="0 0 24 24">
@@ -573,15 +650,15 @@ const AllergyReport = (props) => {
         } else {
           // Add category header with translations
           const lowerCat = category.toLowerCase();
-          const rawCatTrans = CATEGORY_TRANSLATIONS[lowerCat] || { hindi: '', gujarati: '' };
-          const catTrans = { hindi: cleanText(rawCatTrans.hindi), gujarati: cleanText(rawCatTrans.gujarati) };
+          const rawCatTrans = CATEGORY_TRANSLATIONS[lowerCat] || { hindi: '', gujarati: '', marathi: '' };
+          const catTrans = { hindi: cleanText(rawCatTrans.hindi), regional: cleanText(isMarathi ? rawCatTrans.marathi : rawCatTrans.gujarati) };
           catRows.push(
             <View key={category + '-cat'} style={styles.tableRow}>
               <View style={[styles.categoryHeader, { width: '100%' }]}>
                 <Text style={{ color: '#ff0000' }}>
                   <Text style={styles.timesNewRoman}>{category}</Text> / {' '}
                   <Text style={[styles.hindiText, { color: '#ff0000' }]}>{catTrans.hindi}</Text> / {' '}
-                  <Text style={[styles.gujaratiText, { color: '#ff0000' }]}>{catTrans.gujarati}</Text>
+                  <Text style={[getRegionalTextStyle(), { color: '#ff0000' }]}>{catTrans.regional}</Text>
                 </Text>
               </View>
             </View>
@@ -593,7 +670,7 @@ const AllergyReport = (props) => {
               <View style={[styles.tableColHeader, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Sr No.</Text></View>,
               <View style={[styles.tableColHeader, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Name (English)</Text></View>,
               <View style={[styles.tableColHeader, { width: '20%' }]} key="hindi"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansDevanagari' }]}>हिंदी</Text></View>,
-              <View style={[styles.tableColHeader, { width: '20%' }]} key="guj"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansGujarati' }]}>ગુજરાતી</Text></View>,
+              <View style={[styles.tableColHeader, { width: '20%' }]} key="regional"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: getRegionalFontFamily() }]}>{getRegionalHeaderTitle()}</Text></View>,
               <View style={[styles.tableColHeader, { width: '14%' }]} key="period">
                 <Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Pollination</Text>
                 <Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Period</Text>
@@ -626,7 +703,7 @@ const AllergyReport = (props) => {
               <View style={[styles.tableColHeader, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Sr No.</Text></View>,
               <View style={[styles.tableColHeader, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Name (English)</Text></View>,
               <View style={[styles.tableColHeader, { width: '20%' }]} key="hindi"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansDevanagari' }]}>हिंदी</Text></View>,
-              <View style={[styles.tableColHeader, { width: '20%' }]} key="guj"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansGujarati' }]}>ગુજરાતી</Text></View>,
+              <View style={[styles.tableColHeader, { width: '20%' }]} key="regional"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: getRegionalFontFamily() }]}>{getRegionalHeaderTitle()}</Text></View>,
               <View style={[styles.tableColHeader, { width: '14%' }]} key="source"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Source</Text></View>,
               <View style={[styles.tableColHeader, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Wheal Dia mm</Text></View>,
               <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]} key="erythema"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Erythema D+d 2mm</Text></View>,
@@ -636,7 +713,7 @@ const AllergyReport = (props) => {
               <View style={[styles.tableColHeader, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Sr No.</Text></View>,
               <View style={[styles.tableColHeader, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Name (English)</Text></View>,
               <View style={[styles.tableColHeader, { width: '20%' }]} key="hindi"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansDevanagari' }]}>हिंदी</Text></View>,
-              <View style={[styles.tableColHeader, { width: '20%' }]} key="guj"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansGujarati' }]}>ગુજરાતી</Text></View>,
+              <View style={[styles.tableColHeader, { width: '20%' }]} key="regional"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: getRegionalFontFamily() }]}>{getRegionalHeaderTitle()}</Text></View>,
               <View style={[styles.tableColHeader, { width: '14%' }]} key="blank"></View>,
               <View style={[styles.tableColHeader, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Wheal Dia mm</Text></View>,
               <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]} key="erythema"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Erythema D+d 2mm</Text></View>,
@@ -646,7 +723,7 @@ const AllergyReport = (props) => {
               <View style={[styles.tableColHeader, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Sr No.</Text></View>,
               <View style={[styles.tableColHeader, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Name (English)</Text></View>,
               <View style={[styles.tableColHeader, { width: '31%' }]} key="hindi"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansDevanagari' }]}>हिंदी</Text></View>,
-              <View style={[styles.tableColHeader, { width: '20%' }]} key="guj"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: 'NotoSansGujarati' }]}>ગુજરાતી</Text></View>,
+              <View style={[styles.tableColHeader, { width: '20%' }]} key="regional"><Text style={[styles.timesNewRoman, { color: '#ff0000' }, { fontFamily: getRegionalFontFamily() }]}>{getRegionalHeaderTitle()}</Text></View>,
               <View style={[styles.tableColHeader, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Wheal Dia mm</Text></View>,
               <View style={[styles.tableColHeader, styles.tableColLastColumn, { width: '8%' }]} key="erythema"><Text style={[styles.timesNewRoman, { color: '#ff0000' }]}>Erythema D+d 2mm</Text></View>,
             ];
@@ -669,7 +746,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '20%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '14%' }]} key="period"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.period || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
@@ -708,7 +785,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '20%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '14%' }]} key="source"><Text style={[styles.timesNewRoman, { color: '#0074d9' }]}>{dbA.sourceof || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
@@ -722,7 +799,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '20%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA, userVal)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '14%' }]} key="blank"></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
@@ -736,7 +813,7 @@ const AllergyReport = (props) => {
                 <View style={[styles.tableCol, { width: '5%' }]} key="sr"><Text style={[styles.timesNewRoman, userVal && userVal.val >= 3 && styles.highlightedText]}>{srNo++}</Text></View>,
                 <View style={[styles.tableCol, { width: '31%' }]} key="eng"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.english || ''}</Text></View>,
                 <View style={[styles.tableCol2, { width: '31%' }]} key="hindi"><Text style={[styles.hindiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.hindi || ''}</Text></View>,
-                <View style={[styles.tableCol2, { width: '20%' }]} key="guj"><Text style={[styles.gujaratiText, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{dbA.name?.gujarati || ''}</Text></View>,
+                <View style={[styles.tableCol2, { width: '20%' }]} key="regional"><Text style={[getRegionalTextStyle(), { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{getRegionalName(dbA.name)}</Text></View>,
                 <View style={[styles.tableCol2, { width: '6%' }]} key="wheal"><Text style={[styles.timesNewRoman, { color: '#0074d9' }, userVal && userVal.val >= 3 && styles.highlightedText]}>{userVal ? userVal.val : ''}</Text></View>,
                 <View style={[styles.tableCol2, styles.tableColLastColumn, { width: '8%', alignItems: 'center' }]} key="erythema">{userVal && userVal.isChecked ? (
                   <Svg width="12" height="12" viewBox="0 0 24 24">

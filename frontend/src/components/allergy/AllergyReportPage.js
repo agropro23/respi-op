@@ -19,6 +19,7 @@ const AllergyReportPage = () => {
   const [isReportLoading, setIsReportLoading] = useState(false);
   const [patient, setPatient] = useState(null);
   const selectedDoctor = (location.state && location.state.selectedDoctor) || null;
+  const selectedRegionalLanguage = (location.state && location.state.selectedRegionalLanguage) || patchTestData?.regionalLanguage || 'gujarati';
 
   const { downloadReport } = useReportDownload();
 
@@ -27,7 +28,7 @@ const AllergyReportPage = () => {
     setIsReportLoading(true);
     try {
       const safeAllAllergies = Array.isArray(allAllergies) ? allAllergies : [];
-      await downloadReport(patchTestData, patient?.patientId || patientId, safeAllAllergies, selectedDoctor);
+      await downloadReport(patchTestData, patient?.patientId || patientId, safeAllAllergies, selectedDoctor, selectedRegionalLanguage);
     } catch (error) {
       console.error('Error downloading report:', error);
     } finally {
@@ -164,7 +165,7 @@ const AllergyReportPage = () => {
                   console.log('PDF Viewer loaded successfully');
                 }}
               >
-                <AllergyReport data={patchTestData} allAllergies={Array.isArray(allAllergies) ? allAllergies : []} selectedDoctor={selectedDoctor} />
+                <AllergyReport data={patchTestData} allAllergies={Array.isArray(allAllergies) ? allAllergies : []} selectedDoctor={selectedDoctor} selectedRegionalLanguage={selectedRegionalLanguage} />
               </PDFViewer>
             ) : (
               <div className="d-flex align-items-center justify-content-center h-100">

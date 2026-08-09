@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container, Typography, TextField, Grid, RadioGroup, FormControlLabel, Radio, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper, Select, MenuItem, FormLabel, CircularProgress, Button, Snackbar, Alert,
@@ -185,42 +185,38 @@ export default function PatchTest() {
   });
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState('vipul');
+  const [selectedRegionalLanguage, setSelectedRegionalLanguage] = useState('gujarati');
   const [pendingRedirect, setPendingRedirect] = useState(false);
 
   const { downloadReport } = useReportDownload();
-
-  
-
-  useEffect(() => {
-    const fetchPatient = async () => {
-      try {
-        const response = await apiFetch(`${BASE_URL}/api/patients/${patientId}`);
-        if (!response.ok) throw new Error('Failed to fetch patient');
-        const data = await response.json();
-        setPatient(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPatient();
-  }, [patientId]);
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
-    const fetchAllergens = async () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        console.log('Fetching allergens from:', `${BASE_URL}/api/allergies/all`);
-        const response = await apiFetch(`${BASE_URL}/api/allergies/all`);
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-          const errorData = await response.json();
+        const [patientRes, allergensRes, patchRes] = await Promise.all([
+          apiFetch(`${BASE_URL}/api/patients/${patientId}`),
+          apiFetch(`${BASE_URL}/api/allergies/all`),
+          patientId ? apiFetch(`${BASE_URL}/api/patch-testing/patient/${patientId}`) : Promise.resolve(null)
+        ]);
+
+        // 1. Process Patient
+        if (!patientRes.ok) throw new Error('Failed to fetch patient');
+        const patientData = await patientRes.json();
+        setPatient(patientData);
+
+        // 2. Process Allergens
+        if (!allergensRes.ok) {
+          const errorData = await allergensRes.json();
           throw new Error(errorData.message || 'Failed to fetch allergens');
         }
-        const responseData = await response.json();
-        console.log('Allergens response:', responseData);
-        
+        const responseData = await allergensRes.json();
         const data = responseData.data;
         if (!data || !Array.isArray(data)) {
           throw new Error('Invalid data format received for allergens: data field is missing or not an array.');
@@ -277,24 +273,144 @@ export default function PatchTest() {
         data.forEach(item => {
           inputs[item._id] = { enythema1: '', enythema2: false };
         });
+
+        // 3. Pre-fill existing patient patch test data if already saved
+        if (patientId && patchRes && patchRes.ok) {
+          try {
+            const patchData = await patchRes.json();
+              if (Array.isArray(patchData) && patchData.length > 0) {
+                const report = patchData[0];
+                if (report._id) setExistingReportId(report._id);
+
+                if (report.reportType) {
+                  setReportType(report.reportType === 'Skin Testing' ? 'skin' : 'blood');
+                }
+
+                if (report.positive !== undefined && report.positive !== null) {
+                  setPositiveControl(String(report.positive));
+                }
+
+                if (report.negative !== undefined && report.negative !== null) {
+                  setNegativeControl(String(report.negative));
+                }
+
+                if (report.regionalLanguage) {
+                  setSelectedRegionalLanguage(report.regionalLanguage);
+                }
+
+                if (report.specialAdvices) {
+                  setSpecialAdvices(report.specialAdvices);
+                }
+
+                if (report.allergens && typeof report.allergens === 'object') {
+                  const savedMapById = {};
+                  const savedMapByName = {};
+
+                  Object.values(report.allergens).forEach(categoryItems => {
+                    if (Array.isArray(categoryItems)) {
+                      categoryItems.forEach(item => {
+                        if (item.allergenId) {
+                          savedMapById[item.allergenId] = item;
+                        }
+                        if (item.name) {
+                          savedMapByName[item.name.trim().toLowerCase()] = item;
+                        }
+                      });
+                    }
+                  });
+
+                  data.forEach(item => {
+                    const savedItem = savedMapById[item._id] || savedMapByName[(item.name?.english || '').trim().toLowerCase()];
+                    if (savedItem) {
+                      inputs[item._id] = {
+                        enythema1: savedItem.val !== undefined && savedItem.val !== null && savedItem.val > 0 ? String(savedItem.val) : '',
+                        enythema2: !!savedItem.isChecked
+                      };
+                    }
+                  });
+                }
+              }
+          } catch (existingErr) {
+            console.error('Error pre-filling existing patch test report:', existingErr);
+          }
+        }
+
         setEnythemaInputs(inputs);
       } catch (err) {
-        console.error('Error fetching allergens:', err);
+        console.error('Error fetching data:', err);
         setErrorDialog({ open: true, message: err.message });
       } finally {
         setLoadingAllergens(false);
+        setLoading(false);
       }
     };
 
-    fetchAllergens();
-  }, []);
+    fetchData();
+  }, [patientId]);
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
   };
 
   const handleEnythema1Change = (id, value) => {
     setEnythemaInputs(prev => ({ ...prev, [id]: { ...prev[id], enythema1: value } }));
+  };
+
+  const handleEnythemaKeyDown = (e, index) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextInput = document.querySelector(`[data-enythema-index="${index + 1}"]`);
+      if (nextInput) {
+        nextInput.focus();
+        if (nextInput.select) nextInput.select();
+      } else {
+        const currentCatIdx = allergenCategories.findIndex(c => c.key === selectedCategory);
+        if (currentCatIdx !== -1 && currentCatIdx < allergenCategories.length - 1) {
+          const nextCat = allergenCategories[currentCatIdx + 1].key;
+          setSelectedCategory(nextCat);
+          setTimeout(() => {
+            const firstInNextCat = document.querySelector(`[data-enythema-index="0"]`);
+            if (firstInNextCat) {
+              firstInNextCat.focus();
+              if (firstInNextCat.select) firstInNextCat.select();
+            }
+          }, 80);
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prevInput = document.querySelector(`[data-enythema-index="${index - 1}"]`);
+      if (prevInput) {
+        prevInput.focus();
+        if (prevInput.select) prevInput.select();
+      } else {
+        const currentCatIdx = allergenCategories.findIndex(c => c.key === selectedCategory);
+        if (currentCatIdx > 0) {
+          const prevCat = allergenCategories[currentCatIdx - 1].key;
+          setSelectedCategory(prevCat);
+          setTimeout(() => {
+            const allInputs = document.querySelectorAll(`[data-enythema-index]`);
+            if (allInputs.length > 0) {
+              const lastInPrevCat = allInputs[allInputs.length - 1];
+              lastInPrevCat.focus();
+              if (lastInPrevCat.select) lastInPrevCat.select();
+            }
+          }, 80);
+        }
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const nextInput = document.querySelector(`[data-enythema-index="${index + 1}"]`);
+      if (nextInput) {
+        nextInput.focus();
+        if (nextInput.select) nextInput.select();
+      }
+    } else if (typeof handleNumberInput === 'function') {
+      handleNumberInput(e);
+    }
   };
 
   const handleEnythema2Change = (id, checked) => {
@@ -310,6 +426,7 @@ export default function PatchTest() {
       const transformedData = {
         patientId: patient._id,
         reportType: reportType === 'skin' ? 'Skin Testing' : 'Specific IgE',
+        regionalLanguage: selectedRegionalLanguage,
         positive: parseInt(positiveControl),
         negative: parseInt(negativeControl),
         allergens: {},
@@ -361,6 +478,10 @@ export default function PatchTest() {
         }
       }
 
+      if (data && data._id) {
+        setExistingReportId(data._id);
+      }
+
       setSaveStatus({
         open: true,
         message: 'Patch test results saved successfully!',
@@ -401,6 +522,7 @@ export default function PatchTest() {
       const transformedData = {
         patientId: patient._id,
         reportType: reportType === 'skin' ? 'Skin Testing' : 'Specific IgE',
+        regionalLanguage: selectedRegionalLanguage,
         positive: parseInt(positiveControl),
         negative: parseInt(negativeControl),
         allergens: {},
@@ -444,6 +566,10 @@ export default function PatchTest() {
         throw new Error(createData.message || 'Failed to save new report after deletion');
       }
 
+      if (createData && createData._id) {
+        setExistingReportId(createData._id);
+      }
+
       setSaveStatus({
         open: true,
         message: 'Existing report deleted and new report saved successfully!',
@@ -484,13 +610,7 @@ export default function PatchTest() {
     }
   };
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
+  // Removed full page loading blocker
 
   const allergensToShow = groupedAllergens[selectedCategory.toLowerCase()] || [];
   const selectedCategoryObject = allergenCategories.find(cat => cat.key === selectedCategory);
@@ -528,7 +648,7 @@ export default function PatchTest() {
     } else if (selectedCategory === 'Non-Veg') {
       // Count how many Veg and Jain items come before Non-Veg
       const vegCount = foodsCategory.filter(allergen => getFoodType(allergen) === 'Veg').length;
-      const jainCount = foodsCategory.filter(allergen => getFoodType(allergen) === 'Jain').length;
+      const jainCount = foodsCategory.filter(allergen => getFoodType(allergen) === 'Non Jain').length;
       currentSr += vegCount + jainCount;
     }
     
@@ -761,7 +881,7 @@ export default function PatchTest() {
                   ) : filteredAllergens.length > 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} style={{ padding: 0, border: 0 }}>
-                        <div className="allergen-scroll-container">
+                        <div ref={scrollContainerRef} key={selectedCategory} className="allergen-scroll-container">
                           {filteredAllergens.map((row, idx) => (
                             <div key={row._id} className="allergen-row">
                               <TableRow>
@@ -774,8 +894,11 @@ export default function PatchTest() {
                                       type="number"
                                       value={enythemaInputs[row._id]?.enythema1 || ''}
                                       onChange={e => handleEnythema1Change(row._id, e.target.value)}
-                                      onKeyDown={handleNumberInput}
-                                      inputProps={{ style: { width: 100, textAlign: 'center', padding: '4px', marginLeft: '-10px' } }}
+                                      onKeyDown={e => handleEnythemaKeyDown(e, idx)}
+                                      inputProps={{
+                                        'data-enythema-index': idx,
+                                        style: { width: 100, textAlign: 'center', padding: '4px', marginLeft: '-10px' }
+                                      }}
                                     />
                                   </div>
                                 </TableCell>
@@ -1115,6 +1238,40 @@ export default function PatchTest() {
                   </label>
                 </div>
               </div>
+
+              <div style={{ fontWeight: 600, fontSize: 16, color: '#1e293b', marginBottom: 14 }}>Language to include</div>
+              <div className="mb-4">
+                <div className="form-check" style={{ marginBottom: '16px' }}>
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    id="lang-modal-gujarati"
+                    name="modalRegionalLang"
+                    value="gujarati"
+                    checked={selectedRegionalLanguage === 'gujarati'}
+                    onChange={() => setSelectedRegionalLanguage('gujarati')}
+                    style={{ width: '18px', height: '18px', marginRight: '12px', accentColor: '#2563eb' }}
+                  />
+                  <label className="form-check-label" htmlFor="lang-modal-gujarati" style={{ fontSize: '15px', color: '#475569', fontWeight: '500', cursor: 'pointer' }}>
+                    Gujarati (ગુજરાતી)
+                  </label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    id="lang-modal-marathi"
+                    name="modalRegionalLang"
+                    value="marathi"
+                    checked={selectedRegionalLanguage === 'marathi'}
+                    onChange={() => setSelectedRegionalLanguage('marathi')}
+                    style={{ width: '18px', height: '18px', marginRight: '12px', accentColor: '#2563eb' }}
+                  />
+                  <label className="form-check-label" htmlFor="lang-modal-marathi" style={{ fontSize: '15px', color: '#475569', fontWeight: '500', cursor: 'pointer' }}>
+                    Marathi (मराठी)
+                  </label>
+                </div>
+              </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '28px', marginTop: '-25px', marginBottom: '-20px'}}>
               <button
@@ -1140,9 +1297,9 @@ export default function PatchTest() {
                   setShowDoctorModal(false);
                   if (pendingRedirect) {
                     setPendingRedirect(false);
-                    navigate(`/allergy-report/${patientId}`, { state: { selectedDoctor } });
+                    navigate(`/allergy-report/${patientId}`, { state: { selectedDoctor, selectedRegionalLanguage } });
                   } else {
-                    navigate(`/allergy-report/${patientId}`, { state: { selectedDoctor } });
+                    navigate(`/allergy-report/${patientId}`, { state: { selectedDoctor, selectedRegionalLanguage } });
                   }
                 }}
                 className="btn btn-primary px-4 py-2"
