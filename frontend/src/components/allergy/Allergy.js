@@ -336,7 +336,7 @@ const Allergy = ({ patientId, onAllergyUpdate }) => {
                   <React.Fragment key={allergen._id}>
                     <tr className="allergy-row" style={{ borderBottom: expandedAllergyId === allergen._id ? 'none' : '1px solid #dee2e6', cursor: 'pointer' }}>
                       <td style={{ padding: '12px 8px', verticalAlign: 'middle', maxWidth: 180, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={getNameInLanguage(allergen, 'english') || 'N/A'}>
-                        <div style={{ fontWeight: '500', color: '#212529' }}>
+                        <div style={{ fontWeight: '500' }}>
                           {getNameInLanguage(allergen, 'english') || 'N/A'}
                         </div>
                       </td>

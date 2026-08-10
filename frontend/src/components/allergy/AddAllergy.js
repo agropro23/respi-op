@@ -206,6 +206,7 @@ const AddAllergy = ({ onClose, onSuccess, onError }) => {
       }}
     >
       <div
+        className="allergy-modal-card"
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
@@ -219,6 +220,7 @@ const AddAllergy = ({ onClose, onSuccess, onError }) => {
       >
         {/* Modal Header */}
         <div
+          className="allergy-modal-header"
           style={{
             padding: '20px 24px',
             borderBottom: '1px solid #e5e7eb',
@@ -434,9 +436,9 @@ const AddAllergy = ({ onClose, onSuccess, onError }) => {
             {/* {formErrors.instructions && <div className="text-danger mb-2" style={{ fontSize: '12px' }}>{formErrors.instructions}</div>} */}
 
             {allergyForm.instructions.map((instruction, index) => (
-              <div key={index} className="border rounded p-3 mb-3" style={{ backgroundColor: '#f8f9fa' }}>
+              <div key={index} className="allergy-instruction-box border rounded p-3 mb-3">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h6 className="mb-0" style={{ fontSize: '13px', color: '#495057' }}>Instruction {index + 1}</h6>
+                  <h6 className="mb-0" style={{ fontSize: '13px' }}>Instruction {index + 1}</h6>
                   {allergyForm.instructions.length > 1 && (
                     <button
                       type="button"

@@ -18,4 +18,12 @@
 .actualpatch-scroll-container::-webkit-scrollbar-thumb {
   background: #2563eb;
   border-radius: 8px;
+}
+
+body.dark-mode .actualpatch-scroll-container {
+  background: #27272a !important;
+}
+
+body.dark-mode .actualpatch-scroll-container::-webkit-scrollbar {
+  background: #1f1f23 !important;
 } 

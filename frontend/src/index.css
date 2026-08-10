@@ -75,9 +75,481 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
-/* For Firefox */
-input[type="number"]::-moz-number-spin-box {
-  display: none;
+/* ==========================================================================
+   DARK MODE DESIGN SYSTEM
+   Targeting body.dark-mode and html.dark-mode
+   ========================================================================== */
+
+html.dark-mode,
+body.dark-mode {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+
+/* Base elements & Typography in Dark Mode */
+body.dark-mode h1, body.dark-mode .h1,
+body.dark-mode h2, body.dark-mode .h2,
+body.dark-mode h3, body.dark-mode .h3,
+body.dark-mode h4, body.dark-mode .h4,
+body.dark-mode h5, body.dark-mode .h5,
+body.dark-mode h6, body.dark-mode .h6 {
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode li {
+  color: #e4e4e7;
+}
+
+/* Utility Class Overrides in Dark Mode */
+body.dark-mode .text-dark,
+body.dark-mode .text-black,
+body.dark-mode .text-body {
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .text-secondary {
+  color: #a1a1aa !important;
+}
+
+body.dark-mode .bg-white,
+body.dark-mode .bg-light,
+body.dark-mode .bg-body {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode .border,
+body.dark-mode .border-top,
+body.dark-mode .border-bottom,
+body.dark-mode .border-start,
+body.dark-mode .border-end {
+  border-color: #3f3f46 !important;
+}
+
+/* Cards, Modals, Popovers, Dropdowns */
+body.dark-mode .card,
+body.dark-mode .modal-content,
+body.dark-mode .dropdown-menu,
+body.dark-mode .popover,
+body.dark-mode .toast,
+body.dark-mode .list-group-item,
+body.dark-mode .offcanvas {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .card-header,
+body.dark-mode .card-footer,
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  background-color: #1f1f23 !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .dropdown-item {
+  color: #e4e4e7 !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+  background-color: #3f3f46 !important;
+  color: #ffffff !important;
+}
+
+/* Forms, Inputs, Textareas, Selects */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="email"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="search"],
+body.dark-mode input[type="tel"],
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode .form-control::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus,
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+body.dark-mode select option {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode input[type="checkbox"],
+body.dark-mode input[type="radio"],
+body.dark-mode .form-check-input {
+  background-color: #27272a;
+  border-color: #52525b;
+}
+
+body.dark-mode input[type="checkbox"]:checked,
+body.dark-mode input[type="radio"]:checked,
+body.dark-mode .form-check-input:checked {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+body.dark-mode input:disabled,
+body.dark-mode textarea:disabled,
+body.dark-mode select:disabled,
+body.dark-mode .form-control:disabled,
+body.dark-mode .form-select:disabled {
+  background-color: #18181b !important;
+  color: #71717a !important;
+  opacity: 0.65 !important;
+}
+
+/* Tables */
+body.dark-mode table,
+body.dark-mode .table {
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode table.table th,
+body.dark-mode .table thead th {
+  background-color: #1f1f23 !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode table.table td,
+body.dark-mode .table tbody td {
+  background-color: transparent !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-light,
+body.dark-mode .btn-outline-secondary,
+body.dark-mode .btn-secondary {
+  background-color: #3f3f46 !important;
+  color: #f4f4f5 !important;
+  border-color: #52525b !important;
+}
+
+body.dark-mode .btn-light:hover,
+body.dark-mode .btn-outline-secondary:hover,
+body.dark-mode .btn-secondary:hover {
+  background-color: #52525b !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+/* Badges & Alerts */
+body.dark-mode .badge.bg-light,
+body.dark-mode .badge.bg-white {
+  background-color: #3f3f46 !important;
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode .alert-info {
+  background-color: #1e3a8a !important;
+  color: #bfdbfe !important;
+  border-color: #1d4ed8 !important;
+}
+
+body.dark-mode .alert-warning {
+  background-color: #713f12 !important;
+  color: #fef08a !important;
+  border-color: #a16207 !important;
+}
+
+body.dark-mode .alert-success {
+  background-color: #14532d !important;
+  color: #bbf7d0 !important;
+  border-color: #15803d !important;
+}
+
+body.dark-mode .alert-danger {
+  background-color: #7f1d1d !important;
+  color: #fecaca !important;
+  border-color: #b91c1c !important;
+}
+
+/* Specific Inline Style Overrides & Card Styling for React Components in Dark Mode */
+body.dark-mode .stat-card {
+  background: #27272a !important;
+  border-color: #3f3f46 !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .stat-card-header {
+  background: #1f1f23 !important;
+  border-bottom-color: #3f3f46 !important;
+}
+
+body.dark-mode .stat-card-body {
+  background: #27272a !important;
+}
+
+body.dark-mode .stat-card-body h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .activity-fadein {
+  background: #27272a !important;
+  border-color: #3f3f46 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .activity-icon {
+  background: #1f1f23 !important;
+}
+
+body.dark-mode .activity-fadein .text-dark,
+body.dark-mode .activity-fadein .fw-semibold {
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background: #ffffff"],
+body.dark-mode [style*="background: #f8fafc"],
+body.dark-mode [style*="background: #f9fafb"],
+body.dark-mode [style*="background-color: #fff"],
+body.dark-mode [style*="background-color: #ffffff"],
+body.dark-mode [style*="background-color: #f8fafc"],
+body.dark-mode [style*="background-color: #f9fafb"],
+body.dark-mode [style*="background-color: #fafafa"],
+body.dark-mode [style*="background: #fafafa"] {
+  background: #27272a !important;
+  background-color: #27272a !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode [style*="background: linear-gradient"],
+body.dark-mode [style*="background:linear-gradient"] {
+  background: #1f1f23 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode [style*="background-color: #e5e7eb"],
+body.dark-mode [style*="background: #e5e7eb"] {
+  background-color: #3f3f46 !important;
+}
+
+body.dark-mode .input-group-text {
+  background-color: #1f1f23 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .input-group-text svg circle,
+body.dark-mode .input-group-text svg path {
+  stroke: #a1a1aa !important;
+}
+
+body.dark-mode [style*="color: #1e293b"],
+body.dark-mode [style*="color: #111827"],
+body.dark-mode [style*="color: #374151"],
+body.dark-mode [style*="color: #475569"],
+body.dark-mode [style*="color: #000000"],
+body.dark-mode [style*="color: #000"],
+body.dark-mode [style*="color: #222"] {
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode [style*="border: 1px solid #e2e8f0"],
+body.dark-mode [style*="border: 1px solid #cbd5e1"],
+body.dark-mode [style*="border: 1.5px solid #e0e7ef"],
+body.dark-mode [style*="border: 2px dashed #d1d5db"] {
+  border-color: #3f3f46 !important;
+}
+
+/* Settings Page Dark Mode Overrides */
+body.dark-mode .settings-card,
+body.dark-mode .settings-sidebar {
+  background-color: #27272a !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .settings-header-box {
+  background-color: #1f1f23 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .settings-tab-btn {
+  color: #a1a1aa !important;
+}
+
+body.dark-mode .settings-tab-btn.active-tab {
+  background-color: #313146 !important;
+  color: #60a5fa !important;
+  border-color: #2563eb !important;
+}
+
+/* Material UI (MUI) Overrides for Dark Mode */
+body.dark-mode .MuiPaper-root,
+body.dark-mode .MuiCard-root,
+body.dark-mode .MuiDialog-paper,
+body.dark-mode .MuiMenu-paper,
+body.dark-mode .MuiPopover-paper {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .MuiTypography-root,
+body.dark-mode .MuiFormLabel-root,
+body.dark-mode .MuiFormControlLabel-label,
+body.dark-mode .MuiInputLabel-root,
+body.dark-mode .MuiDialogTitle-root,
+body.dark-mode .MuiDialogContentText-root {
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode .MuiFormLabel-root.Mui-focused,
+body.dark-mode .MuiInputLabel-root.Mui-focused {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .MuiTableCell-root {
+  color: #f4f4f5 !important;
+  border-bottom-color: #3f3f46 !important;
+}
+
+body.dark-mode .MuiTableCell-head {
+  background-color: #1f1f23 !important;
+  color: #f4f4f5 !important;
+  font-weight: 700;
+}
+
+body.dark-mode .MuiInputBase-root,
+body.dark-mode .MuiOutlinedInput-root,
+body.dark-mode .MuiSelect-select {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode .MuiOutlinedInput-notchedOutline {
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #52525b !important;
+}
+
+body.dark-mode .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #2563eb !important;
+}
+
+body.dark-mode .MuiCheckbox-root,
+body.dark-mode .MuiRadio-root {
+  color: #a1a1aa !important;
+}
+
+body.dark-mode .MuiCheckbox-root.Mui-checked,
+body.dark-mode .MuiRadio-root.Mui-checked {
+  color: #2563eb !important;
+}
+
+body.dark-mode .MuiSvgIcon-root {
+  color: inherit;
+}
+
+/* Comprehensive Module Card Overrides in Dark Mode */
+body.dark-mode .followup-card,
+body.dark-mode .prescription-card,
+body.dark-mode .instruction-card,
+body.dark-mode .patchtest-card {
+  background-color: #27272a !important;
+  border-color: #3f3f46 !important;
+}
+
+/* RGB Color Serialization Overrides for React Inline Styles */
+body.dark-mode [style*="rgb(255, 255, 255)"],
+body.dark-mode [style*="rgb(248, 250, 252)"],
+body.dark-mode [style*="rgb(249, 250, 251)"],
+body.dark-mode [style*="rgb(250, 250, 250)"],
+body.dark-mode [style*="rgb(243, 244, 246)"] {
+  background: #27272a !important;
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode [style*="rgb(240, 240, 240)"] {
+  background: #1f1f23 !important;
+  background-color: #1f1f23 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode [style*="rgb(17, 24, 39)"],
+body.dark-mode [style*="rgb(30, 41, 59)"],
+body.dark-mode [style*="rgb(55, 65, 81)"],
+body.dark-mode [style*="rgb(107, 114, 128)"],
+body.dark-mode [style*="rgb(33, 37, 41)"],
+body.dark-mode [style*="color: #212529"],
+body.dark-mode [style*="color:#212529"] {
+  color: #f4f4f5 !important;
+}
+
+/* Allergy Modals & Tables Specific Dark Mode Overrides */
+body.dark-mode .allergy-modal-card {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .allergy-modal-header {
+  background-color: #1f1f23 !important;
+  color: #f4f4f5 !important;
+  border-color: #3f3f46 !important;
+}
+
+body.dark-mode .allergy-instruction-box,
+body.dark-mode [style*="background-color: #f8f9fa"],
+body.dark-mode [style*="background-color:#f8f9fa"],
+body.dark-mode [style*="rgb(248, 249, 250)"],
+body.dark-mode [style*="rgb(248,249,250)"] {
+  background-color: #1f1f23 !important;
+  background: #1f1f23 !important;
+  border-color: #3f3f46 !important;
+  color: #f4f4f5 !important;
+}
+
+body.dark-mode [style*="color: #495057"],
+body.dark-mode [style*="color:#495057"],
+body.dark-mode [style*="rgb(73, 80, 87)"] {
+  color: #a1a1aa !important;
 }
 
 /* ==================== MOBILE RESPONSIVE STYLES (< 768px) ==================== */

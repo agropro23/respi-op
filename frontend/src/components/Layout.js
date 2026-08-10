@@ -34,6 +34,7 @@ const Layout = () => {
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
+    document.documentElement.classList.toggle('dark-mode', darkMode);
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
@@ -127,7 +128,7 @@ const Layout = () => {
       background: darkMode ? '#23232b' : 'transparent',
     },
     navItemActive: {
-      color: '#2563eb',
+      color: darkMode ? '#60a5fa' : '#2563eb',
       backgroundColor: darkMode ? '#313146' : '#eff6ff',
     },
     navItemDefault: {
@@ -268,8 +269,8 @@ const Layout = () => {
                 ...(isActive('/patients') ? styles.navItemActive : styles.navItemDefault)
               }}
               onClick={() => navigate('/patients')}
-              onMouseEnter={(e) => e.target.closest('div').style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.target.closest('div').style.backgroundColor = 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = darkMode ? '#313146' : '#f3f4f6'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = isActive('/patients') ? (darkMode ? '#313146' : '#eff6ff') : (darkMode ? '#23232b' : 'transparent')}
             >
               <Users size={20} style={{ minWidth: '20px', minHeight: '20px' }} />
               {sidebarHovered && <span style={styles.navItemText}>Manage Patients</span>}
@@ -282,22 +283,22 @@ const Layout = () => {
                 ...(isActive('/appointments') ? styles.navItemActive : styles.navItemDefault)
               }}
               onClick={() => navigate('/appointments')}
-              onMouseEnter={(e) => e.target.closest('div').style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.target.closest('div').style.backgroundColor = 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = darkMode ? '#313146' : '#f3f4f6'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = isActive('/appointments') ? (darkMode ? '#313146' : '#eff6ff') : (darkMode ? '#23232b' : 'transparent')}
             >
               <Calendar size={20} style={{ minWidth: '20px', minHeight: '20px' }} />
               {sidebarHovered && <span style={styles.navItemText}>Appointments</span>}
             </div>
 
-              {}
-              <div
+            {/* Allergies */}
+            <div
               style={{ 
                 ...styles.navItem, 
                 ...(isActive('/allergy') ? styles.navItemActive : styles.navItemDefault)
               }}
               onClick={() => navigate('/allergy')}
-              onMouseEnter={(e) => e.target.closest('div').style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.target.closest('div').style.backgroundColor = 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = darkMode ? '#313146' : '#f3f4f6'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = isActive('/allergy') ? (darkMode ? '#313146' : '#eff6ff') : (darkMode ? '#23232b' : 'transparent')}
             >
               <AlertTriangle size={20} style={{ minWidth: '20px', minHeight: '20px' }} />
               {sidebarHovered && <span style={styles.navItemText}>Allergies</span>}
@@ -310,8 +311,8 @@ const Layout = () => {
                 ...(isActive('/medicines') ? styles.navItemActive : styles.navItemDefault)
               }}
               onClick={() => navigate('/medicines')}
-              onMouseEnter={(e) => e.target.closest('div').style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.target.closest('div').style.backgroundColor = 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = darkMode ? '#313146' : '#f3f4f6'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = isActive('/medicines') ? (darkMode ? '#313146' : '#eff6ff') : (darkMode ? '#23232b' : 'transparent')}
             >
               <Pill size={20} style={{ minWidth: '20px', minHeight: '20px' }} />
               {sidebarHovered && <span style={styles.navItemText}>Medicine</span>}
@@ -324,14 +325,8 @@ const Layout = () => {
                 ...(isActive('/settings') ? styles.navItemActive : styles.navItemDefault)
               }}
               onClick={() => navigate('/settings')}
-              onMouseEnter={(e) => {
-                e.target.closest('div').style.backgroundColor = darkMode ? '#313146' : '#f3f4f6';
-              }}
-              onMouseLeave={(e) => {
-                e.target.closest('div').style.backgroundColor = isActive('/settings')
-                  ? (darkMode ? '#313146' : '#eff6ff')
-                  : (darkMode ? '#23232b' : 'transparent');
-              }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = darkMode ? '#313146' : '#f3f4f6'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = isActive('/settings') ? (darkMode ? '#313146' : '#eff6ff') : (darkMode ? '#23232b' : 'transparent')}
             >
               <Settings size={20} style={{ minWidth: '20px', minHeight: '20px' }} />
               {sidebarHovered && <span style={styles.navItemText}>Settings</span>}

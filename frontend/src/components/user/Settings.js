@@ -49,7 +49,6 @@ const Settings = () => {
   };
 
   const sectionTitleStyle = {
-    color: '#374151',
     fontSize: '13px',
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
@@ -323,7 +322,7 @@ const Settings = () => {
             border: 'none',
             padding: 0,
             cursor: 'pointer',
-            color: '#111827',
+            color: 'inherit',
             display: 'flex',
             alignItems: 'center',
           }}
@@ -334,7 +333,6 @@ const Settings = () => {
         <h4
           className="mb-0 fw-bold"
           style={{
-            color: '#111827',
             fontSize: '26px',
             lineHeight: '1',
           }}
@@ -344,6 +342,7 @@ const Settings = () => {
       </div>
 
       <div
+        className="settings-card"
         style={{
           backgroundColor: 'white',
           borderRadius: '12px',
@@ -355,7 +354,7 @@ const Settings = () => {
         <div className="row g-0">
           {/* Sidebar */}
           <div
-            className="col-md-3"
+            className="col-md-3 settings-sidebar"
             style={{
               backgroundColor: '#f8fafc',
               borderRight: '1px solid #e5e7eb',
@@ -363,6 +362,7 @@ const Settings = () => {
             }}
           >
             <div
+              className="settings-header-box"
               style={{
                 padding: '20px 18px',
                 borderBottom: '1px solid #e5e7eb',
@@ -391,14 +391,14 @@ const Settings = () => {
                   setMessage('');
                   setError('');
                 }}
-                className="w-100 d-flex align-items-center"
+                className={`w-100 d-flex align-items-center settings-tab-btn ${activeTab === 'username' ? 'active-tab' : ''}`}
                 style={{
                   gap: '10px',
                   padding: '11px 12px',
                   borderRadius: '8px',
                   border: activeTab === 'username' ? '1px solid #2563eb' : '1px solid transparent',
                   backgroundColor: activeTab === 'username' ? '#eff6ff' : 'transparent',
-                  color: activeTab === 'username' ? '#2563eb' : '#374151',
+                  color: activeTab === 'username' ? '#2563eb' : 'inherit',
                   fontWeight: activeTab === 'username' ? 600 : 500,
                   fontSize: '13px',
                   cursor: 'pointer',
@@ -417,14 +417,14 @@ const Settings = () => {
                   setMessage('');
                   setError('');
                 }}
-                className="w-100 d-flex align-items-center"
+                className={`w-100 d-flex align-items-center settings-tab-btn ${activeTab === 'password' ? 'active-tab' : ''}`}
                 style={{
                   gap: '10px',
                   padding: '11px 12px',
                   borderRadius: '8px',
                   border: activeTab === 'password' ? '1px solid #2563eb' : '1px solid transparent',
                   backgroundColor: activeTab === 'password' ? '#eff6ff' : 'transparent',
-                  color: activeTab === 'password' ? '#2563eb' : '#374151',
+                  color: activeTab === 'password' ? '#2563eb' : 'inherit',
                   fontWeight: activeTab === 'password' ? 600 : 500,
                   fontSize: '13px',
                   cursor: 'pointer',
@@ -440,6 +440,7 @@ const Settings = () => {
           {/* Main Content */}
           <div className="col-md-9">
             <div
+              className="settings-header-box"
               style={{
                 padding: '20px 24px',
                 borderBottom: '1px solid #e5e7eb',
