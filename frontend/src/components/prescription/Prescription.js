@@ -31,6 +31,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
     const [selectedMedicine, setSelectedMedicine] = useState({
         medicineName: '',
         dosage: '',
+        quantity: '',
         duration: '',
         timings: {
             morning: false,
@@ -222,6 +223,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
             selectedMedicines: [...prev.selectedMedicines, {
                 name: selectedMedicine.medicineName,
                 dosage: selectedMedicine.dosage,
+                quantity: selectedMedicine.quantity || '',
                 duration: selectedMedicine.duration,
                 timings: selectedMedicine.timings,
                 instructions: selectedMedicine.instructions,
@@ -233,6 +235,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
         setSelectedMedicine({
             medicineName: '',
             dosage: '',
+            quantity: '',
             duration: '',
             timings: {
                 morning: false,
@@ -353,6 +356,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                 medicines: prescriptionForm.selectedMedicines.map(med => ({
                     medicineName: med.name || med.medicineName || '',
                     dosage: med.dosage,
+                    quantity: med.quantity || '',
                     duration: parseInt(med.duration) || 0,
                     timings: {
                         morning: med.timings.morning || false,
@@ -492,6 +496,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                     const langCode = langMap[printLanguage] || 'en';
                     // Medicine name always in English
                     const dosage = printLanguage === 'english' ? med.dosage : await translateText(med.dosage, langCode);
+                    const quantity = printLanguage === 'english' ? med.quantity : (med.quantity ? await translateText(med.quantity.toString(), langCode) : '');
                     const duration = printLanguage === 'english' ? med.duration : await translateText(med.duration.toString(), langCode);
                     // Always set timingLabels for English
                     let timingLabels;
@@ -512,6 +517,7 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                     return {
                         ...med,
                         dosage,
+                        quantity,
                         duration,
                         timingLabels,
                         instructions,
@@ -819,8 +825,10 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                             const timingLabels = printLanguage === 'english'
                                                                 ? getTimingLabels(medicine)
                                                                 : medicine.timingLabels;
-                                                            // Localize dosage for display
+                                                            // Localize dosage, quantity, duration for display
                                                             const displayDosage = printLanguage === 'english' ? medicine.dosage : localizeDigits(medicine.dosage, printLanguage);
+                                                            const displayQuantity = printLanguage === 'english' ? medicine.quantity : (medicine.quantity ? localizeDigits(medicine.quantity, printLanguage) : '');
+                                                            const displayDuration = printLanguage === 'english' ? medicine.duration : (medicine.duration ? localizeDigits(medicine.duration, printLanguage) : '');
                                                             return (
                                                                 <div
                                                                     key={index}
@@ -831,7 +839,14 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                                         <div>
                                                                             <strong style={{ color: '#1e293b', fontSize: '14px', display: 'block', marginBottom: '4px' }}>{medicine.name}</strong>
                                                                             <div style={{ color: '#64748b', fontSize: '13px' }}>
-                                                                                {displayDosage} {timingLabels && (
+                                                                                {displayDosage}
+                                                                                {displayQuantity && (
+                                                                                    <span style={{ fontWeight: 500, marginLeft: 8 }}>| Qty: {displayQuantity}</span>
+                                                                                )}
+                                                                                {displayDuration && (
+                                                                                    <span style={{ fontWeight: 500, marginLeft: 8 }}>| {displayDuration} Days</span>
+                                                                                )}
+                                                                                {timingLabels && (
                                                                                     <span style={{ fontWeight: 500, marginLeft: 8 }}>| {timingLabels}</span>
                                                                                 )}
                                                                             </div>
@@ -1202,6 +1217,22 @@ function Prescription({ initialPatient, onClose, prescriptionToEdit }) {
                                                 </div>
                                             )}
                                         </div>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{ fontSize: '13px', fontWeight: '500', color: '#475569', marginBottom: '8px' }}>Quantity</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Enter quantity"
+                                            value={selectedMedicine.quantity}
+                                            onChange={(e) => handleMedicineChange('quantity', e.target.value)}
+                                            style={{
+                                                borderRadius: '6px',
+                                                border: '1px solid #cbd5e1',
+                                                padding: '10px 14px',
+                                                fontSize: '14px'
+                                            }}
+                                        />
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">Duration (Days)</label>

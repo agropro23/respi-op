@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -90,6 +90,18 @@ const AddInstruction = () => {
   const [selectedInstructions, setSelectedInstructions] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState('english');
+
+  const instructionsScrollRef = useRef(null);
+  const imagesScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (instructionsScrollRef.current) {
+      instructionsScrollRef.current.scrollTop = 0;
+    }
+    if (imagesScrollRef.current) {
+      imagesScrollRef.current.scrollTop = 0;
+    }
+  }, [selectedCategory]);
 
   useEffect(() => {
     setLoading(true);
@@ -432,7 +444,7 @@ const AddInstruction = () => {
                   </button>
                 )}
               </div>
-              <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 10, paddingBottom: 20, minHeight: 0 }}>
+              <div ref={instructionsScrollRef} className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 10, paddingBottom: 20, minHeight: 0 }}>
                 <div className="d-flex flex-column gap-3">
                   {displayedAllergies.map((allergy, idx) => {
                     const allergySr = allergySrMap[allergy._id] || (idx + 1);
@@ -513,7 +525,7 @@ const AddInstruction = () => {
           ) : displayedAllergies.length === 0 ? (
             <div className="alert alert-info" style={{ margin: '24px 0' }}>No images found for this category.</div>
           ) : (
-            <div className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 5, paddingBottom: 20, minHeight: 0 }}>
+            <div ref={imagesScrollRef} className="custom-scrollbar" style={{ flex: 1, overflowY: 'auto', paddingRight: 5, paddingBottom: 20, minHeight: 0 }}>
               <div className="d-flex flex-column gap-3">
                 {displayedAllergies.map((allergy) => (
                 <div key={allergy._id} className="card p-2 mb-2" style={{ borderRadius: 10, border: '1px solid #e3e3e3' }}>

@@ -61,6 +61,7 @@ const Allergy = ({ patientId, onAllergyUpdate }) => {
       return matchesSearch && matchesCategory;
     });
     setFilteredAllergens(currentFiltered);
+    window.scrollTo(0, 0);
   }, [searchTerm, selectedCategory, allergens]);
 
   const handleSuccess = (message) => {

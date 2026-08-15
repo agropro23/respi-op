@@ -9,6 +9,11 @@ const medicineSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    quantity: {
+        type: String,
+        default: '',
+        required: false
+    },
     duration: {
         type: Number,
         required: true

@@ -225,7 +225,7 @@ function PatientPrescriptions() {
                     <td style="padding: 6px 8px; text-align: center;">${m.dosage}</td>
                     <td style="padding: 6px 8px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                     <td style="padding: 6px 8px; text-align: center;">${m.duration} ${daysLabel}</td>
-                    <td style="padding: 6px 8px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
+                    <td style="padding: 6px 8px; text-align: center;">${m.quantity ? d(m.quantity.toString()) : d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                   </tr>
                   `).join('')}
                 </tbody>
@@ -376,7 +376,7 @@ function PatientPrescriptions() {
                       <td style="padding: 6px 8px; text-align: center;">${m.dosage}</td>
                       <td style="padding: 6px 8px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                       <td style="padding: 6px 8px; text-align: center;">${m.duration} ${daysLabel}</td>
-                      <td style="padding: 6px 8px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
+                      <td style="padding: 6px 8px; text-align: center;">${m.quantity ? d(m.quantity.toString()) : d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                     </tr>
                     `).join('')}
                   </tbody>
@@ -527,7 +527,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
               <td style="padding: 4px 6px; text-align: center;">${m.dosage}</td>
               <td style="padding: 4px 6px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
               <td style="padding: 4px 6px; text-align: center;">${m.duration} ${daysLabel}</td>
-              <td style="padding: 4px 6px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
+              <td style="padding: 4px 6px; text-align: center;">${m.quantity ? d(m.quantity.toString()) : d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
             </tr>
             `).join('')}
           </tbody>
@@ -680,7 +680,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
                       <td style="padding: 4px 6px; text-align: center;">${m.dosage}</td>
                       <td style="padding: 4px 6px; text-align: center;">${!m.isBelow && m.rawInstructions?.other && m.rawInstructions.other.trim() !== '' ? escapeHtml(m.rawInstructions.other) : getTimingPatternLocalized(m.timings)}</td>
                       <td style="padding: 4px 6px; text-align: center;">${m.duration} ${daysLabel}</td>
-                      <td style="padding: 4px 6px; text-align: center;">${d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
+                      <td style="padding: 4px 6px; text-align: center;">${m.quantity ? d(m.quantity.toString()) : d(calculateQty(m.dosageRaw || m.dosage, m.timings, m.durationRaw || m.duration))}</td>
                     </tr>
                     `).join('')}
                   </tbody>
@@ -1003,7 +1003,7 @@ async function generateSmallWithLetterhead({ prescription, patient, lang, width,
                                                         {prescription.medicines.map((medicine, index) => {
                                                             const timingPattern = getTimingPattern(medicine.timings);
                                                             const freq = medicine.frequency || 'Daily';
-                                                            const qty = calculateQty(medicine.dosageRaw || medicine.dosage, medicine.timings, medicine.durationRaw || medicine.duration);
+                                                            const qty = (medicine.quantity !== undefined && medicine.quantity !== '') ? medicine.quantity : calculateQty(medicine.dosageRaw || medicine.dosage, medicine.timings, medicine.durationRaw || medicine.duration);
                                                             const instructionsText = formatInstructions(medicine.instructions);
                                                             return (
                                                                 <tr key={index} style={{ verticalAlign: 'top' }}>
