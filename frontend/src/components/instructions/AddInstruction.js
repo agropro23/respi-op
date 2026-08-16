@@ -338,14 +338,31 @@ const AddInstruction = () => {
     navigate(`/display-instruction/${patientId}`);
   };
 
+  const getAllergyNameEnglish = (allergy) => {
+    if (!allergy || !allergy.name) return '';
+    if (typeof allergy.name === 'string') return allergy.name;
+    return allergy.name.english || Object.values(allergy.name)[0] || '';
+  };
+
+  const getInstructionInLanguage = (inst, lang) => {
+    if (!inst) return '';
+    if (typeof inst === 'string') {
+      return lang === 'english' ? inst : '';
+    }
+    if (lang === 'english') {
+      return inst.english || '';
+    }
+    return inst[lang] && typeof inst[lang] === 'string' && inst[lang].trim() !== '' ? inst[lang] : '';
+  };
+
   const allInstructionKeys = displayedAllergies.flatMap(allergy => {
     if (isFoodOrMisc) {
       return [`${allergy._id}-0`];
     } else if (Array.isArray(allergy.instructions)) {
       return allergy.instructions
         .map((inst, instIdx) => {
-          const text = inst && inst[selectedLanguage] ? inst[selectedLanguage] : (typeof inst === 'string' ? inst : inst?.english);
-          return text && typeof text === 'string' && text.trim() !== '' ? `${allergy._id}-${instIdx}` : null;
+          const text = getInstructionInLanguage(inst, selectedLanguage);
+          return text && text.trim() !== '' ? `${allergy._id}-${instIdx}` : null;
         })
         .filter(key => key !== null);
     }
@@ -452,7 +469,7 @@ const AddInstruction = () => {
                       <div key={allergy._id} className="card shadow-sm" style={{ borderRadius: 12, padding: 0, border: '1px solid #e3e3e3' }}>
                         <div className="card-body" style={{ padding: 20 }}>
                           <h6 className="fw-bold mb-2" style={{ color: '#222' }}>
-                            {allergySr}. {allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}
+                            {allergySr}. {getAllergyNameEnglish(allergy)}
                           </h6>
                           {isFoodOrMisc ? (
                             <div className="d-flex align-items-center">
@@ -463,15 +480,28 @@ const AddInstruction = () => {
                                 checked={selectedInstructions.includes(`${allergy._id}-0`)}
                                 onChange={() => handleInstructionCheckbox(allergy._id, 0)}
                               />
-                              <span style={{ fontSize: 13 }}>{allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}</span>
+                              <span style={{ fontSize: 13 }}>{getAllergyNameEnglish(allergy)}</span>
                             </div>
                           ) : (
-                            Array.isArray(allergy.instructions) && allergy.instructions.length > 0 ? (
-                              <ul className="list-group list-group-flush mb-0" style={{ border: 'none' }}>
-                                {allergy.instructions.map((inst, instIdx) => {
-                                  const text = inst && inst[selectedLanguage] ? inst[selectedLanguage] : (typeof inst === 'string' ? inst : inst?.english);
-                                  if (!text || typeof text !== 'string' || text.trim() === '') return null;
-                                  return (
+                            (() => {
+                              if (!Array.isArray(allergy.instructions) || allergy.instructions.length === 0) {
+                                return <span className="text-muted" style={{ fontSize: 13 }}>No instructions available</span>;
+                              }
+                              const availableInstructions = allergy.instructions
+                                .map((inst, instIdx) => ({
+                                  inst,
+                                  instIdx,
+                                  text: getInstructionInLanguage(inst, selectedLanguage)
+                                }))
+                                .filter(item => item.text && item.text.trim() !== '');
+
+                              if (availableInstructions.length === 0) {
+                                return <span className="text-muted" style={{ fontSize: 13 }}>No instructions available in {selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}</span>;
+                              }
+
+                              return (
+                                <ul className="list-group list-group-flush mb-0" style={{ border: 'none' }}>
+                                  {availableInstructions.map(({ instIdx, text }) => (
                                     <li
                                       className="px-2 py-1 d-flex align-items-center"
                                       key={instIdx}
@@ -488,12 +518,10 @@ const AddInstruction = () => {
                                         <strong>{`${allergySr}${String.fromCharCode(65 + instIdx)}`}</strong>: {text}
                                       </span>
                                     </li>
-                                  );
-                                })}
-                              </ul>
-                            ) : (
-                              <span className="text-muted">No instructions available</span>
-                            )
+                                  ))}
+                                </ul>
+                              );
+                            })()
                           )}
                         </div>
                       </div>
@@ -539,12 +567,12 @@ const AddInstruction = () => {
                         onChange={() => handleImageCheckbox(allergy._id)}
                       />
                     )}
-                    <span style={{ fontSize: 13 }}>{allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}</span>
+                    <span style={{ fontSize: 13 }}>{getAllergyNameEnglish(allergy)}</span>
                   </div>
                   {allergy.image && allergy.image.data && allergy.image.data !== '' ? (
                     <img
                       src={`data:${allergy.image.contentType};base64,${allergy.image.data}`}
-                      alt={allergy.name && allergy.name[selectedLanguage] ? allergy.name[selectedLanguage] : (typeof allergy.name === 'string' ? allergy.name : allergy.name.english)}
+                      alt={getAllergyNameEnglish(allergy)}
                       className="w-100"
                       style={{ objectFit: 'cover', height: 120, borderRadius: 8 }}
                     />

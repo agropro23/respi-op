@@ -127,18 +127,28 @@ const getFontFamily = (lang) => {
 const InstructionReport = ({ data }) => {
   const selectedLanguage = data.selectedLanguage || 'english';
 
-  const getLangString = (obj) => {
+  const getAllergyNameEnglish = (obj) => {
     if (!obj) return '';
     if (typeof obj === 'string') return obj;
-    // If object has selectedLanguage, return it
+    if (obj.english && typeof obj.english === 'string' && obj.english.trim()) return obj.english;
+    const first = Object.values(obj).find(v => typeof v === 'string' && v.trim());
+    return first || '';
+  };
+
+  const getInstructionInSelectedLanguage = (obj) => {
+    if (!obj) return '';
+    if (typeof obj === 'string') {
+      return selectedLanguage === 'english' ? obj : '';
+    }
+    if (selectedLanguage === 'english') {
+      return (obj.english && typeof obj.english === 'string' && obj.english.trim()) ? obj.english : '';
+    }
+    // If selected language is Hindi, Gujarati, or Marathi:
     if (obj[selectedLanguage] && typeof obj[selectedLanguage] === 'string' && obj[selectedLanguage].trim()) {
       return obj[selectedLanguage];
     }
-    // Fallback to English
-    if (obj.english && typeof obj.english === 'string' && obj.english.trim()) return obj.english;
-    // Fallback to first non-empty string value
-    const first = Object.values(obj).find(v => typeof v === 'string' && v.trim());
-    return first || '';
+    // No fallback to English if Hindi/Gujarati/Marathi is not available
+    return '';
   };
 
   console.log('InstructionReport data:', data); // Debug the incoming data
@@ -149,7 +159,7 @@ const InstructionReport = ({ data }) => {
 
   const allergyImages = (data?.allergyImages || []).map(img => ({
     ...img,
-    name: getLangString(img.name) // Ensure name is in selected language
+    name: getAllergyNameEnglish(img.name) // Allergy name is ALWAYS displayed in English only
   }));
   const isSingleImage = allergyImages.length === 1;
 
@@ -160,8 +170,15 @@ const InstructionReport = ({ data }) => {
     }
   }
 
-  const instructions = (data?.allInstructions || []).map(inst => getLangString(inst));
-  const foodNames = (data?.foodNames || []).map(getLangString);
+  // Instructions strictly in selected language (no English fallback for non-English)
+  const instructions = (data?.allInstructions || [])
+    .map(inst => getInstructionInSelectedLanguage(inst))
+    .filter(inst => inst && typeof inst === 'string' && inst.trim() !== '');
+
+  // Food allergen names are ALWAYS displayed in English only
+  const foodNames = (data?.foodNames || [])
+    .map(getAllergyNameEnglish)
+    .filter(food => food && typeof food === 'string' && food.trim() !== '');
 
   // Format report date
   const reportDate = data?.createdAt ? new Date(data.createdAt).toLocaleDateString('en-GB') : '';
@@ -228,8 +245,8 @@ const InstructionReport = ({ data }) => {
               <View style={styles.imageRow}>
                 <View key={allergyImages[0].id} style={styles.singleImageContainer}>
                   {allergyImages[0].imageUrl && <Image style={styles.singleAllergyImage} src={allergyImages[0].imageUrl} />}
-                  {/* Allergy name in selected language and correct font */}
-                  <Text style={{ ...styles.allergyName, fontFamily: getFontFamily(selectedLanguage) }}>{allergyImages[0].name}</Text>
+                  {/* Allergy name in English */}
+                  <Text style={styles.allergyName}>{allergyImages[0].name}</Text>
                 </View>
               </View>
             ) : (
@@ -238,8 +255,8 @@ const InstructionReport = ({ data }) => {
                   {row.map((img, colIndex) => (
                     <View key={img.id} style={styles.imageContainer}>
                       {img.imageUrl && <Image style={styles.allergyImage} src={img.imageUrl} />}
-                      {/* Allergy name in selected language and correct font */}
-                      <Text style={{ ...styles.allergyName, fontFamily: getFontFamily(selectedLanguage) }}>{img.name}</Text>
+                      {/* Allergy name in English */}
+                      <Text style={styles.allergyName}>{img.name}</Text>
                     </View>
                   ))}
                   {row.length === 1 && <View style={styles.imageContainer} />}
@@ -290,10 +307,10 @@ const InstructionReport = ({ data }) => {
               {foodNames.filter(food => food && typeof food === 'string' && food.trim() !== '').map((food, i) => (
                 <View key={`food-avoid-${i}`} style={{ width: '32%', flexDirection: 'row', marginBottom: 4 }}>
                   <View style={{ width: 15, alignItems: 'flex-start' }}>
-                    <Text style={{ fontSize: 11, fontFamily: getFontFamily(selectedLanguage) }}>{'\u2022'}</Text>
+                    <Text style={{ fontSize: 11 }}>{'\u2022'}</Text>
                   </View>
                   <View style={{ width: 140 }}>
-                    <Text style={{ fontSize: 11, lineHeight: 1.3, fontFamily: getFontFamily(selectedLanguage) }}>{food}</Text>
+                    <Text style={{ fontSize: 11, lineHeight: 1.3 }}>{food}</Text>
                   </View>
                 </View>
               ))}
